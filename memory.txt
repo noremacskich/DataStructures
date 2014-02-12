@@ -1,0 +1,19 @@
+Free o
+Allo x
+o o o o o o o o o o o o o o o 
+                      ___1___
+o o o o o o o o o o o x x x x 4 allocated
+                __2__ ___1___
+o o o o o o o o x x x x x x x 3 allocated
+                __2__        
+o o o o o o o o x x x o o o o 4 unallocated
+    _____1_____ __2__       
+o o x x x x x x x x x o o o o 6 allocated
+    _____1_____ __2__       
+o o x x x x x x x x x o o o o 5 allocated - error
+    _____1_____ __2__   __3__
+o o x x x x x x x x x o x x x 5 allocated - error : 3 allocated
+    _____1_____         __3__
+o o x x x x x x o o o o x x x 2:3 unallocated
+    _____1_____         __3__
+o o x x x x x x o o o o x x x 
