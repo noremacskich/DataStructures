@@ -212,32 +212,30 @@ void free_zeros(void){
 	}
 	log("end free_zeros", debug);
 }
-
+// assumption: you have only added 1 link to list, not many
 void clumpFree(void){
 	bool debug = true;
-	log("enterng clumpFree(void)", debug);
+	bool debug3 = true;
+	log("entering clumpFree(void)", debug);
 	
 	FREEPTR prevLink = freelist;
 	FREEPTR curLink = freelist;
-	
+	if(debug3){
+		dump_freelist();
+		dump_alloclist();
+	}
 	log("Is free list NULL?", debug);
-	if(freelist == NULL){
+	if(curLink == NULL){
 		log("Yes, exiting the clumpFree(void)", debug);
 		return;
 	}
 	
 	log("Nope, parsing the free list for clumping", debug);
-	while(curLink==NULL){
+	while(curLink!=NULL){
 		
-		log("Is this the last link?", debug);
-		if(curLink->next == NULL){
-			log("Yes, exiting the loop", debug);
-			// Kinda hard to clump together a single link . . .
-			break;
-		}
-		
-		log("No, can we clump the previous and next links together?", debug);
-		if(prevLink->end_byte = curLink->start_byte + 1){
+
+		log("Can we clump the previous and next links together?", debug);
+		if(prevLink->end_byte == curLink->start_byte - 1){
 			
 			log("Yes, but are we looking at the same link?", debug);
 			if(prevLink == curLink){
@@ -247,7 +245,17 @@ void clumpFree(void){
 			log("No, clumping the links", debug);
 			prevLink->end_byte = curLink->end_byte;
 			prevLink->size += curLink->size;
-			prevLink->next = curLink->next;
+			
+			log("Is this the last link?", debug);
+			if(curLink->next == NULL){
+				log("Yes, exiting the loop", debug);
+				prevLink->next = NULL;
+			
+				// Kinda hard to clump together a single link . . .
+				break;
+			}else{
+				prevLink->next = curLink->next;
+			}
 			delete curLink;
 			
 			log("curLink need to point to something!", debug);
@@ -255,11 +263,16 @@ void clumpFree(void){
 			// sections in a row that need to be clumped together 
 			curLink = prevLink; 
 		}
-		
+
 		log("Move to next link", debug);
 		prevLink = curLink;
 		curLink = curLink->next;
 	}
+		if(debug3){
+		dump_freelist();
+		dump_alloclist();
+	}
+	log("Exiting clumpFree(void)", debug);
 }
 
 void allocSortInsert(ALLOCPTR newLink){
@@ -344,8 +357,8 @@ void allocSortInsert(ALLOCPTR newLink){
 
 void freeSortInsert(FREEPTR newLink){
 	
-	bool debug = true;
-	bool debug3 = true;
+	bool debug = false;
+	bool debug3 = false;
 	
 	FREEPTR curLink = freelist; // temp pointer to list
 	FREEPTR prevLink = freelist; // temp pointer to list
@@ -649,7 +662,7 @@ int allocate_memory(const int job, const int amount)
   * 	^	the job whose memory to deallocate
   */ 
 void release_memory(const int job){ 
-	bool debug = true;
+	bool debug = false;
 	bool debug2 = false;
 	bool debug3 = false;
 	
@@ -744,6 +757,9 @@ void release_memory(const int job){
 		lastLink = curLink;			// Keep the last pointer
 		curLink = curLink->next;	//move pointer to next node (or NULL)
 	}
+	clumpFree();
+	
+	log("Exiting release_memory(id)", debug);
 }
 
 /**@fun int total_free(void)
