@@ -806,7 +806,7 @@ int total_allocated(void){
  *	^	the amount of free memory in the block 
  */
 int largest_free(void){
-	bool debug = true;
+	bool debug = false;
 	log("Create a free pointer", debug);
 	FREEPTR curLink = freelist; // temp pointer to list
 	int largest = 0;
@@ -928,7 +928,7 @@ void report_memory(void){
 	}
 	
 	log("With that done, we can go into our loop", debug);
-	while(curFree != NULL){
+	while(curFree != NULL && curAllo != NULL){
 		//cout << endl << curFree->start_byte << " : " << curAllo->end_byte << endl;
 		if(debug){
 			alloLink(curAllo);
@@ -943,6 +943,10 @@ void report_memory(void){
 			//prevAllo = curAllo;
 			curAllo = curAllo->next;
 			//alloLink(curAllo);
+			
+			if(curAllo == NULL){
+				break;
+			}
 		}
 		
 		log("Print the free space, and go back to the alloc chain", debug);
@@ -950,9 +954,19 @@ void report_memory(void){
 		// we can assume that there is only 1 free block to print
 		printFree(curFree);
 		curFree = curFree->next;
-		
-		
 	}
+	
+	log("Check for leftover alloc links", debug);
+	while(curAllo != NULL){
+		
+		log("Print them out", debug);
+		printAlloc(curAllo);
+		log("Move on to the next alloc link", debug);
+		//prevAllo = curAllo;
+		curAllo = curAllo->next;
+		//alloLink(curAllo);
+	}
+	
 	log("Which list has the start byte?", debug);
 	if(alloclist->start_byte == 0){
 		log("The allocated list has the start byte", debug);
