@@ -379,8 +379,8 @@ void freeSortInsert(FREEPTR newLink){
 					newLink->next = curLink;
 					prevLink = newLink;
 				}else{
-					log("No, Is this the last link in the chain?", debug);
-					if(curLink->next == NULL){
+					//log("No, Is this the last link in the chain?", debug);
+					//if(curLink->next == NULL){
 						//log("Yes, adding it to the end", debug);
 						//prevLink->next = newLink;
 						//newLink->next = NULL;
@@ -394,13 +394,7 @@ void freeSortInsert(FREEPTR newLink){
 						prevLink->next = newLink;
 						newLink->next = curLink;
 						prevLink = newLink;*/
-					}
-					/*log("No, inserting into the chain", debug);
-					newLink->next = prevLink->next;
-					prevLink->next = newLink->next;
-					curLink = prevLink;*/
 				}
-
 				log("Breaking out of loop", debug);
 				break;
 			}else
@@ -655,12 +649,15 @@ int allocate_memory(const int job, const int amount)
   * 	^	the job whose memory to deallocate
   */ 
 void release_memory(const int job){ 
+	bool debug = true;
+	bool debug2 = false;
+	bool debug3 = false;
+	
+	log("Entering release_memory(job)", debug);
 	ALLOCPTR curLink = alloclist; 	// temp pointer to list
 	ALLOCPTR lastLink = alloclist;	// temp pointer to previous value
 	
-	bool debug = false;
-	bool debug2 = false;
-	bool debug3 = false;
+
 	
 	if(debug3){
 		cout << endl << "Removing jobs with ID of " << job << endl << endl;
@@ -715,6 +712,8 @@ void release_memory(const int job){
 			
 			if(curLink->next == NULL){
 				log("no, this is the last link", debug);
+				lastLink->next = NULL;
+				deallocate(curLink);
 			}else
 			
 			//============================================================
@@ -949,6 +948,9 @@ int main(void)
 	
 	cout << endl << "release memory 3" << endl;
 	release_memory(3);
+	
+	cout << endl << "release memory 1" << endl;
+	release_memory(1);
 	
 	dump_freelist();
 	dump_alloclist();
