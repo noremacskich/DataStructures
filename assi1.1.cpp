@@ -874,8 +874,23 @@ int job_allocated(const int job){
  *		^	76 - 100		FREE
  *
  */
+void alloLink(ALLOCPTR curLink){
+	cout << "Start : End : Size : ID"<< endl;
+	cout << curLink->start_byte << " : ";
+	cout << curLink->end_byte << " : ";
+	cout << curLink->size << " : ";
+	cout << curLink->id << endl;
+}
+
+void freeLink(FREEPTR curLink){
+	cout << "Start : End : Size"<< endl;
+	cout << curLink->start_byte << " : ";
+	cout << curLink->end_byte << " : ";
+	cout << curLink->size << endl;
+}
+ 
 void report_memory(void){
-	bool debug = true;
+	bool debug = false;
 	log("Entering report_memory", debug);
 	
 	FREEPTR curFree = freelist;
@@ -903,7 +918,7 @@ void report_memory(void){
 	cout.width(25); 
 	cout << left << "Memory Block" << "JOB" << endl;
 	
-	debug = false;
+	
 	log("If the freelist starts with a zero", debug);
 	if(freelist->start_byte == 0){
 		log("Print it out as a special case", debug);
@@ -914,14 +929,20 @@ void report_memory(void){
 	
 	log("With that done, we can go into our loop", debug);
 	while(curFree != NULL){
-		//cout << endl << curAllo->next->start_byte << " : " << curAllo->end_byte + 1 << endl;
+		//cout << endl << curFree->start_byte << " : " << curAllo->end_byte << endl;
+		if(debug){
+			alloLink(curAllo);
+			freeLink(curFree);
+		}
 		log("Go through all the contiguous alloc links", debug);
-		while(curAllo->next->start_byte == curAllo->end_byte + 1 && curAllo != NULL){
+		while(curAllo != NULL && curFree->start_byte >= curAllo->end_byte + 1){
+			
 			log("Print them out", debug);
 			printAlloc(curAllo);
 			log("Move on to the next alloc link", debug);
-			prevAllo = curAllo;
+			//prevAllo = curAllo;
 			curAllo = curAllo->next;
+			//alloLink(curAllo);
 		}
 		
 		log("Print the free space, and go back to the alloc chain", debug);
@@ -990,10 +1011,7 @@ int main(void)
 	
 	cout << endl << "release memory 3" << endl;
 	release_memory(3);
-	
-	cout << endl << "release memory 1" << endl;
-	release_memory(1);
-	
+		
 	dump_freelist();
 	dump_alloclist();
 	
