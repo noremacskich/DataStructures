@@ -214,8 +214,8 @@ void free_zeros(void){
 }
 // assumption: you have only added 1 link to list, not many
 void clumpFree(void){
-	bool debug = true;
-	bool debug3 = true;
+	bool debug = false;
+	bool debug3 = false;
 	log("entering clumpFree(void)", debug);
 	
 	FREEPTR prevLink = freelist;
@@ -899,7 +899,39 @@ void report_memory(void){
 		log("No, both lists have something");
 	}
 	
+	log("Print out the table", debug);
+	cout.width(25); 
+	cout << left << "Memory Block" << "JOB" << endl;
 	
+	debug = false;
+	log("If the freelist starts with a zero", debug);
+	if(freelist->start_byte == 0){
+		log("Print it out as a special case", debug);
+		printFree(curFree);
+		log("Then move the the free pointer on", debug);
+		curFree = curFree->next;
+	}
+	
+	log("With that done, we can go into our loop", debug);
+	while(curFree != NULL){
+		//cout << endl << curAllo->next->start_byte << " : " << curAllo->end_byte + 1 << endl;
+		log("Go through all the contiguous alloc links", debug);
+		while(curAllo->next->start_byte == curAllo->end_byte + 1 && curAllo != NULL){
+			log("Print them out", debug);
+			printAlloc(curAllo);
+			log("Move on to the next alloc link", debug);
+			prevAllo = curAllo;
+			curAllo = curAllo->next;
+		}
+		
+		log("Print the free space, and go back to the alloc chain", debug);
+		// since the free chain will never have contiguous blocks of info,
+		// we can assume that there is only 1 free block to print
+		printFree(curFree);
+		curFree = curFree->next;
+		
+		
+	}
 	log("Which list has the start byte?", debug);
 	if(alloclist->start_byte == 0){
 		log("The allocated list has the start byte", debug);
@@ -913,13 +945,7 @@ void report_memory(void){
 		log("Neither list has a start byte of 0", debug);
 	}
 	
-	log("Print out the header", debug);
-	cout.width(25); 
-	cout << left << "Memory Block" << "JOB" << endl;
-	
-	log("Print out the line", debug);
-	printFree(freelist);
-	printAlloc(alloclist);
+
 	
 	log("exiting report_memory", debug);
  }
