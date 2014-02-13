@@ -449,10 +449,14 @@ void printFree(FREEPTR printlink){
 	
 	log("Create '## - ##' part", debug);
 	ostringstream memblock;
-	memblock << printlink->start_byte << " - " << printlink->end_byte;
+	memblock.width(3);
+	memblock << right << printlink->start_byte << " - ";	
 	
+	memblock.width(3);
+	memblock << right << printlink->end_byte;
+
 	log("Now add the padding and put 'FREE' at the end", debug);
-	cout.width(25); 
+	cout.width(15); 
 	cout << left << memblock.str() << "FREE" << endl;
 	
 	log("Exiting printFree(printlink)", debug);
@@ -465,10 +469,14 @@ void printAlloc(ALLOCPTR printlink){
 	
 	log("Create '## - ##' part", debug);
 	ostringstream memblock;
-	memblock << printlink->start_byte << " - " << printlink->end_byte;
+	memblock.width(3);
+	memblock << right << printlink->start_byte << " - ";	
+	
+	memblock.width(3);
+	memblock << right << printlink->end_byte;
 	
 	log("Now add the padding and put 'FREE' at the end", debug);
-	cout.width(25); 
+	cout.width(15); 
 	cout << left << memblock.str() << printlink->id << endl;
 	
 	log("Leaving printAlloc(printlink)", debug);
@@ -588,7 +596,7 @@ int allocate_memory(const int job, const int amount)
 	
 	log("No, now try to allocate it", debug);
 	//if(debug){
-		cout << endl << "Allocating " << amount << " blocks for job " << job << endl << endl;
+		//cout << endl << "Allocating " << amount << " blocks for job " << job << endl << endl;
 	
 	
 	log("Allocating . . .", debug);
@@ -915,7 +923,7 @@ void report_memory(void){
 	}
 	
 	log("Print out the table", debug);
-	cout.width(25); 
+	cout.width(15); 
 	cout << left << "Memory Block" << "JOB" << endl;
 	
 	
@@ -999,9 +1007,38 @@ void report_memory(void){
  * 
  */
 void report_jobs(void){
+	bool debug = true;
     // STUB
+	
+	
+	
 }
+
 //==========  MAIN =============================
+void printJobs(int id){
+	bool debug = true;
+    
+	log("Entering printJobs(id)", debug);
+	
+	log("Display the job we are looking for", debug);
+	cout.width(8);
+	cout << left << finding;
+	
+	log("Now go find all occurrences of job", debug);
+	while(curLink != NULL){
+		log("Is this link our job?", debug);
+		if(curLink->id == finding){
+			log("Yes, printing out relevant details", debug);
+			cout << curLink->start_byte << " - " << curLink->end_byte;
+		}
+		log("No, continuing on to next link", debug);
+		curLink = curLink->next;
+	}
+	log("Need to print out the return", debug);
+	cout << endl;
+	
+	log("Leaving printJobs", debug);
+}
 
 int main(void)
 {
@@ -1019,20 +1056,120 @@ int main(void)
 	allocate_memory(4,40);
 	allocate_memory(3,30);
 	allocate_memory(4,40);
-
-	dump_freelist();
-	dump_alloclist();
 	
 	cout << endl << "release memory 3" << endl;
 	release_memory(3);
-		
+
 	dump_freelist();
 	dump_alloclist();
-	
-	cout << endl << "Memory for job 4 " << job_allocated(4) << endl;
-	cout << endl << "Free Total: " << total_free() << endl;
-	cout << "Alloc Total: " << total_allocated() << endl;
 
 	report_memory();
+	
 	return 0;
+}/*
+//==========  MAIN =============================
+int main(void)
+{
+  char ch ;  // used to pause between tests
+  int r;     // results of allocate_memory
+
+  // ================================================================================
+  cout << "====================================" << endl;
+  cout << "  AUTHOR :  <YOUR NAME >  " << endl;
+  cout << "====================================" << endl;
+  cout << endl;
+  cout << "ENTER A CHARACTER ";
+  cin >>ch;
+  cout << endl;
+  //=================================================================================
+  cout << "====================================" << endl;
+  cout << "TEST # 1" << endl;
+  cout << "====================================" << endl << endl;
+  init_memory_manager(200);
+  
+  r = allocate_memory(1,200);  
+  cout << "allocate_memory returns : " << r << endl << endl; // ALL memory  
+  r = allocate_memory(2,30);
+  cout << "allocate_memory returns : " << r << endl << endl; // over allocate
+  
+  release_memory(1);        // free all memory
+  
+  r = allocate_memory(1,-1);
+  cout << "allocate_memory returns : " << r << endl << endl; // try allocate  -1
+  r = allocate_memory(3,0);
+  cout << "allocate_memory returns : " << r << endl << endl; // allocate 0
+  r = allocate_memory(1,256);
+  cout << "allocate_memory returns : " << r << endl << endl;  // over allocate
+  r = allocate_memory(1,100);
+  cout << "allocate_memory returns : " << r << endl << endl;  //Ok allocate 100
+  
+  cout << "total free memory is  : " << total_free() << endl;  // 100
+  cout << "total alloc memory is : " << total_allocated() << endl; // 100
+ 
+
+  cout << endl;
+  cout << "ENTER A CHARACTER ";
+  cin >>ch;
+  cout << endl;
+
+  // ================================================================================= 
+  cout << "====================================" << endl;
+  cout << "TEST # 2 [Deallocate several of same ] " << endl;
+  cout << "====================================" << endl << endl;
+  init_memory_manager(200);
+  r = allocate_memory(1,20);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(2,30);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(1,20);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(3,30);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(1,20);
+  cout << "allocate_memory returns : " << r << endl << endl;
+ 
+  cout << "total free memory is  : " << total_free() << endl;
+  cout << "total alloc memory is : " << total_allocated() << endl;
+  
+  release_memory(1);
+  //======================
+  report_memory();
+  report_jobs();
+   
+  cout << "total free memory is  : " << total_free() << endl;  // 100
+  cout << "total alloc memory is : " << total_allocated() << endl; // 100
+ 
+  cout << endl;
+  cout << "ENTER A CHARACTER ";
+  cin >>ch;
+  cout << endl;
+
+  // =================================================================================
+  cout << "====================================" << endl;
+  cout << "TEST # 3  BETWEEN [merge to both blocks]" << endl;
+  cout << "====================================" << endl << endl;
+  init_memory_manager(200);
+
+  r = allocate_memory(1,25);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(2,25);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(3,25);
+  cout << "allocate_memory returns : " << r << endl << endl;
+  r = allocate_memory(4,25);
+  cout << "allocate_memory returns : " << r << endl << endl; 
+  r = allocate_memory(5,25);
+  cout << "allocate_memory returns : " << r << endl << endl; 
+  //=====================
+  cout << "========================" << endl << endl;
+  cout << "total free memory is  : " << total_free() << endl;  // 100
+  cout << "total alloc memory is : " << total_allocated() << endl; // 100
+  release_memory(1);
+  release_memory(3);
+  release_memory(2);  
+  //======================
+  report_memory();
+  report_jobs();
+    
+  return 0;
 }
