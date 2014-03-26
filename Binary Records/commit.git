@@ -1,0 +1,19 @@
+Created:
+1	\Binary Records\
+2		Program.cpp
+3		a2.txt
+4		b2014.cpp
+5		commit.git
+
+Reasons:
+1	This will hold my new assignment
+2	This is the primary program that needs to be turned in.
+3	This is where the info for the binary file is coming from.
+4	This converts a2.txt into a binary file.
+5	This will hold all changes for the Binary Records Assignment.
+
+Modified:
+1	\Binary Records\Program.cpp
+
+Reason:
+1	Added the Main menu and View Employee menu.
