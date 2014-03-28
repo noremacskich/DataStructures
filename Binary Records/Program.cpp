@@ -35,6 +35,9 @@ struct EMPL_TYPE
 int main(void); // program main driver
 void mainMenu(void); // This is the main menu
 void empView(void); // Enter ID Number to view employee
+void empList(void); // This lists out the employees in ascending order
+void empEditId(void); // This will allow user to select an employee ID to edit
+void empEditDep(int empID); // This will allow user to edit the department number of employee
 void testread(void);  // testing only!! reading text lines from file
 void create_data_file(void); // Process records and create the binary file
 void read_binary_file(void); // testing only!!  look at what is in the Binary file
@@ -48,7 +51,7 @@ EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
  */
 void mainMenu(void){
 	
-	string menuChoice = "";
+	int menuChoice = -99;
 	
 	// The title
 	cout << "Main Menu" << endl;
@@ -74,24 +77,29 @@ void mainMenu(void){
 			empView();
 			break;
 		case 2:
-			
+			empEditId();
 			break;
 		case 3:
-			
+			empList();
 			break;
 		case 4:
-			
+			cout << "End Program" << endl;
+			exit;
 			break;
 		default:
-			
+			cout << "Default" << endl;
+			mainMenu();
 	}
-}
+}// mainMenu
 
 /**@fun empView(void)
  *	^	This menu screen allows the user to enter the employee ID number to view
  *
  */
  void empView(void){
+	
+	// Variables
+	int empID=-99;
 	
 	// Title
 	cout << "VIEW EMPLOYEE" << endl;
@@ -103,7 +111,7 @@ void mainMenu(void){
 	cout << "To view an Employee record you will need to" << endl;
 	cout << "enter their Employee ID number." << endl;
 	cout << endl;
-	cout << "To return to MAIN MENU enter the number 0" << endl;
+	cout << "To return to MAIN MENU : enter the number 0" << endl;
 	
 	// Space
 	cout << endl << endl;
@@ -118,20 +126,170 @@ void mainMenu(void){
 		mainMenu();
 	}else{
 		// Lookup the Employee
-		
+		cout << "employee lookup" << endl;
 	}
 
 } // empView
+
+/**@fun empEditId(void)
+ *	^	This menu screen allows the user to enter the employee ID that they wish to edit
+ *
+ */
+ void empEditId(void){
+	
+	// Variables
+	int empID=-99;
+	
+	// Title
+	cout << "EDIT" << endl;
+	cout << "EMPLOYEE DEPARTMENT NUMBER" << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Description
+	cout << "To EDIT an Employee Department number you will need to" << endl;
+	cout << "enter the Employee ID number." << endl;
+	cout << endl;
+	cout << "To return to MAIN MENU : enter the number 0" << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Ask for input
+	cout << "Please enter the Employee ID number: __";
+	
+	cin >> empID;
+	
+	// Do they want to go back?
+	if(empID==0){
+		return;
+	}else{
+		// Edit the department number
+		cout << "Enter Employee ID" << endl;
+		empEditDep(empID);
+	}
+	
+	// Lookup Employee department number
+	int depNum = 55; //empLookup(empid);
+	
+	// Title
+	cout << "EDIT" << endl;
+	cout << "EMPLOYEE DEPARTMENT NUMBER cont." << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Description
+	cout << "Employee: " << empID << endl;
+	cout << endl;
+	cout << "Current Department Number: " << depNum << endl;
+	cout << endl;
+	cout << "To change the department number you will need to " << endl;
+	cout << "enter the new department number" << endl;
+	cout << endl;
+	cout << "To return to MAIN MENU : enter the number 0" << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Ask for input
+	cout << "Please enter the NEW department number: __";
+	
+	cin >> empID;
+	
+	// Do they want to go back?
+	if(empID==0){
+		return;
+	}else{
+		// Change the department number.
+		cout << "New Department Number" << endl;
+	}
+
+} // empEditDep
+
+/**@fun empList(void)
+ *	^	This menu screen allows the user to print out a list of employees by id or name.
+ *
+ */
+ void empList(void){
+	
+	// Variables
+	int empID=-99;
+	
+	// Title
+	cout << "LIST ALL EMPLOYEES" << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Description
+	cout << "You may list all employees ordered in several different" << endl;
+	cout << "ways.  All will be in ascending order." << endl;
+	cout << "1) List ordered by Employee ID Number" << endl;
+	cout << "2) List ordered by Employee Name {sorry not available}" << endl;
+	cout << "3) Return to MAIN MENU" << endl;
+	cout << endl;
+	cout << "Please enter your selection from the menu [1-3]" << endl;
+	
+	// Space
+	cout << endl << endl;
+	
+	// Ask for input
+	cout << "Please enter the Employee ID number: __";
+	
+	cin >> empID;
+	
+	// Do they want to go back?
+	if(empID==3){
+		return;
+	}else if(empID==2){
+		// Order by ID
+		cout << "Order by ID" << endl;
+	}else if(empID==3){
+		// Order by Name
+		cout << "Order by Name" << endl;
+	}else{
+		// Do Nothing
+		cout << "Not an option" << endl;
+	}
+
+} // empList
+
+/**@fun menuContinue()
+ *	^	This will ask the user if they wish to continue
+ * @return Bool
+ * 
+ */
+bool menuContinue(){
+	
+	// Variables
+	bool next = false;
+	
+	// Ask for input
+	cout << "Do you wish to continue? (Y/N)";
+	
+	// Store input
+	cin >> next;
+	
+	if(next){
+		mainMenu();
+	}
+ }
 // ====== main driver ==============================
 int main(void)
 {
+	do{
+		mainMenu();
+		
+	}while(menuContinue());
 	
-	testread();  // see what is read form the text file
+	/*testread();  // see what is read form the text file
 	
 	create_data_file(); // create the binary file
 	
 	read_binary_file( );  // look at what is inside the binary file
-	
+	*/
 	return 0;
 }
 

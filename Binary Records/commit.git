@@ -1,19 +1,19 @@
+Menu Creation
+
 Created:
-1	\Binary Records\
-2		Program.cpp
-3		a2.txt
-4		b2014.cpp
-5		commit.git
+1 	Program.cpp : void mainMenu(void);
+2	Program.cpp : void empView(void);
+3	Program.cpp : void empList(void);
+4	Program.cpp : void empEditId(void);
+5	Program.cpp : void empEditDep(int empID);
+6	Program.cpp : void menuContinue();
+7	.gitignore
 
 Reasons:
-1	This will hold my new assignment
-2	This is the primary program that needs to be turned in.
-3	This is where the info for the binary file is coming from.
-4	This converts a2.txt into a binary file.
-5	This will hold all changes for the Binary Records Assignment.
-
-Modified:
-1	\Binary Records\Program.cpp
-
-Reason:
-1	Added the Main menu and View Employee menu.
+1	This is the main menu
+2	Enter ID Number to view employee
+3	This lists out the employees in ascending order
+4	This will allow user to select an employee ID to edit
+5	This will allow user to edit the department number of employee
+6	Asks if you want to continue, and returns true for yes and false for no.
+7	Updated it to not include class videos
