@@ -52,12 +52,6 @@ EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
  */
 void mainMenu(void){
 	
-	// Lazily clearing the screen
- 	clearScreen();
-	
- 	// Defensive Programming
-	int menuChoice = -99;
-	
 	// The title
 	cout << "Main Menu" << endl;
 	
@@ -75,27 +69,7 @@ void mainMenu(void){
 	
 	// Ask for and store the input, then clear the cin buffer
 	cout << "Please enter your selection from the menu [1-4] : ";
-	cin >> menuChoice;
-	cin.clear();
-	
-	switch (menuChoice){
-		case 1:
-			empView();
-			break;
-		case 2:
-			empEditId();
-			break;
-		case 3:
-			empList();
-			break;
-		case 4:
-			cout << "End Program" << endl;
-			exit;
-			break;
-		default:
-			cout << "Default" << endl;
-			mainMenu();
-	}
+
 }// mainMenu
 
 /**@fun empView(void)
@@ -103,12 +77,6 @@ void mainMenu(void){
  *
  */
  void empView(void){
-	
- 	// Lazily clearing the screen
- 	clearScreen();
- 	 
-	// Variables
-	int empID=-99;
 	
 	// Title
 	cout << "VIEW EMPLOYEE" << endl;
@@ -125,19 +93,9 @@ void mainMenu(void){
 	// Space
 	cout << endl << endl;
 	
-	// Ask for and store the input, then clear the cin buffer
+	// Ask for impID
 	cout << "Please enter the Employee ID number : ";
-	cin >> empID;
-	cin.clear();
 	
-	// Do they want to go back?
-	if(empID==0){
-		mainMenu();
-	}else{
-		// Lookup the Employee
-		cout << "employee lookup" << endl;
-	}
-
 } // empView
 
 /**@fun empEditId(void)
@@ -148,10 +106,11 @@ void mainMenu(void){
  void empEditId(void){
 	
  	// Lazily clearing the screen
- 	clearScreen();
+ 	//clearScreen();
  	 
 	// Variables
 	int empID=-99;
+	int depNum=-99;
 	
 	// Title
 	cout << "EDIT" << endl;
@@ -180,7 +139,7 @@ void mainMenu(void){
 	}else{
 		
 		// Lazily clearing the screen
-		clearScreen();
+		//clearScreen();
 		
 		// Edit the department number
 		cout << "Enter Employee ID" << endl;
@@ -210,16 +169,15 @@ void mainMenu(void){
 		
 		// Ask for and store the input, then clear the cin buffer
 		cout << "Please enter the NEW department number : ";
-		cin >> empID;
+		cin >> depNum;
 		cin.clear();
 		
 		// Do they want to go back?
 		if(empID==0){
 			return;
-		return;
 		}else{
 			// Change the department number.
-			cout << "New Department Number" << endl;
+			cout << "New Department Number" << depNum <<endl;
 		}
 	}
 } // empEditDep
@@ -230,12 +188,6 @@ void mainMenu(void){
  *
  */
  void empList(void){
-	
- 	// Lazily clearing the screen
- 	clearScreen();
- 	
-	// Variables
-	int empID=-99;
 	
 	// Title
 	cout << "LIST ALL EMPLOYEES" << endl;
@@ -257,22 +209,7 @@ void mainMenu(void){
 	
 	// Ask for and store the input, then clear the cin buffer
 	cout << "Please enter the Employee ID number : ";
-	cin >> empID;
-	cin.clear(); // Clear the cin buffer
-	
-	// Do they want to go back?
-	if(empID==3){
-		return;
-	}else if(empID==2){
-		// Order by ID
-		cout << "Order by ID" << endl;
-	}else if(empID==3){
-		// Order by Name
-		cout << "Order by Name" << endl;
-	}else{
-		// Do Nothing
-		cout << "Not an option" << endl;
-	}
+
 
 } // empList
 
@@ -331,9 +268,95 @@ void clearScreen(void)
 // ====== main driver ==============================
 int main(void)
 {
+	int main_choice;
+	int emplid_num;
+	int empID;
+	
 	do{
+		// Clear the Screen.
+		clearScreen();
+		
+		// Display the main menu
 		mainMenu();
-	}while(menuContinue());
+		
+		// Get their choice
+		cin >> main_choice;
+		
+		switch(main_choice){
+			
+			
+			case 1: 
+				// Clear the Screen.
+				clearScreen();
+				
+				// Print the Employee Menu
+				empView();
+				
+				// Grab their choice
+				cin >> emplid_num;
+				
+				// If user presses 4, it means they want to go back to main
+				// menu
+				if(emplid_num==4){
+					break; // To the main menu
+				}
+				
+				// call the function to handle the logic
+				cout << "Looked up Employee " << emplid_num << "." << endl;
+				break;
+				
+				
+			case 2:
+				// Clear the Screen.
+				clearScreen();
+				
+				// All logic and gui is handled in this function
+				empEditId();
+				break;
+				
+				
+			case 3:
+				// Clear the Screen.
+				clearScreen();
+				
+				// Display the employee List Menu
+				empList();
+				
+				// Take their menu choice
+				cin >> empID;
+				cin.clear(); // Clear the cin buffer
+				
+				//Perform action based on their choice
+				switch (empID){
+					case 1:
+						cout << "Order by ID" << endl;
+						break;
+					case 2:
+						cout << "Order by Name" << endl;
+						break;
+					case 3: 
+						break; // To the main menu
+					default:
+						cout << "Wrong Input" << endl;
+				}
+
+				break;
+				
+				
+				
+			case 4:
+				cout << "End Program" << endl;
+				
+				break;
+			
+				
+				
+				
+			default:
+				cout << "oops :)" << endl;
+		}
+	}while(main_choice != 4);
+
 	
 	/*testread();  // see what is read form the text file
 	

@@ -1,24 +1,12 @@
-More work on Menu
+Watched the class video . . .
 
 Modified:
-1	bool menuContinue(void)
+1	mainMenu(void)
+2	empView(void)
+3	empEditId(void)
+4	empList(void)
 
 Reasons:
-1	Gave it the ability to recognize a few different ways of saying yes and no.
-	Will ask 20 times for the correct input before it quits the program.
-
-
-Added
-1	bool menuContinue(void)
-2	void ClearScreen(void)
-
-Reasons
-1	Added it to the function prototypes list.
-2	Need a way to clear the screen for each menu
-
-
-Removed
-1	empEditDep(int empID)
-
-Reason:
-1	Combined it with empEditId, this will make menu work better.
+1-4	Watched the video on menus from class, modifying mine to match his way of
+	doing it.  To me it looks messy, but it does make sense.
+	
