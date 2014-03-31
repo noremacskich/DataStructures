@@ -37,7 +37,8 @@ void mainMenu(void); // This is the main menu
 void empView(void); // Enter ID Number to view employee
 void empList(void); // This lists out the employees in ascending order
 void empEditId(void); // This will allow user to select an employee ID to edit
-void empEditDep(int empID); // This will allow user to edit the department number of employee
+bool menuContinue(void); // This will ask user if s/he wants to continue
+void clearScreen(void); // Quick and dirty clear screen function
 void testread(void);  // testing only!! reading text lines from file
 void create_data_file(void); // Process records and create the binary file
 void read_binary_file(void); // testing only!!  look at what is in the Binary file
@@ -51,6 +52,10 @@ EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
  */
 void mainMenu(void){
 	
+	// Lazily clearing the screen
+ 	clearScreen();
+	
+ 	// Defensive Programming
 	int menuChoice = -99;
 	
 	// The title
@@ -68,9 +73,10 @@ void mainMenu(void){
 	// Space
 	cout << endl << endl;
 	
-	// Ask for input
-	cout << "Please enter your selection from the menu [1-4] : __";
+	// Ask for and store the input, then clear the cin buffer
+	cout << "Please enter your selection from the menu [1-4] : ";
 	cin >> menuChoice;
+	cin.clear();
 	
 	switch (menuChoice){
 		case 1:
@@ -98,6 +104,9 @@ void mainMenu(void){
  */
  void empView(void){
 	
+ 	// Lazily clearing the screen
+ 	clearScreen();
+ 	 
 	// Variables
 	int empID=-99;
 	
@@ -116,10 +125,10 @@ void mainMenu(void){
 	// Space
 	cout << endl << endl;
 	
-	// Ask for input
-	cout << "Please enter the Employee ID number: __";
-	
+	// Ask for and store the input, then clear the cin buffer
+	cout << "Please enter the Employee ID number : ";
 	cin >> empID;
+	cin.clear();
 	
 	// Do they want to go back?
 	if(empID==0){
@@ -132,11 +141,15 @@ void mainMenu(void){
 } // empView
 
 /**@fun empEditId(void)
- *	^	This menu screen allows the user to enter the employee ID that they wish to edit
+ *	^	This menu screen allows the user to enter the employee ID that they 
+ *		wish to edit.
  *
  */
  void empEditId(void){
 	
+ 	// Lazily clearing the screen
+ 	clearScreen();
+ 	 
 	// Variables
 	int empID=-99;
 	
@@ -156,64 +169,71 @@ void mainMenu(void){
 	// Space
 	cout << endl << endl;
 	
-	// Ask for input
-	cout << "Please enter the Employee ID number: __";
-	
+	// Ask for and store the input, then clear the cin buffer
+	cout << "Please enter the Employee ID number : ";
 	cin >> empID;
+	cin.clear();
 	
 	// Do they want to go back?
 	if(empID==0){
 		return;
 	}else{
+		
+		// Lazily clearing the screen
+		clearScreen();
+		
 		// Edit the department number
 		cout << "Enter Employee ID" << endl;
-		empEditDep(empID);
-	}
-	
-	// Lookup Employee department number
-	int depNum = 55; //empLookup(empid);
-	
-	// Title
-	cout << "EDIT" << endl;
-	cout << "EMPLOYEE DEPARTMENT NUMBER cont." << endl;
-	
-	// Space
-	cout << endl << endl;
-	
-	// Description
-	cout << "Employee: " << empID << endl;
-	cout << endl;
-	cout << "Current Department Number: " << depNum << endl;
-	cout << endl;
-	cout << "To change the department number you will need to " << endl;
-	cout << "enter the new department number" << endl;
-	cout << endl;
-	cout << "To return to MAIN MENU : enter the number 0" << endl;
-	
-	// Space
-	cout << endl << endl;
-	
-	// Ask for input
-	cout << "Please enter the NEW department number: __";
-	
-	cin >> empID;
-	
-	// Do they want to go back?
-	if(empID==0){
+		
+		// Lookup Employee department number
+		int depNum = 55; //empLookup(empid);
+		
+		// Title
+		cout << "EDIT" << endl;
+		cout << "EMPLOYEE DEPARTMENT NUMBER cont." << endl;
+		
+		// Space
+		cout << endl << endl;
+		
+		// Description
+		cout << "Employee: " << empID << endl;
+		cout << endl;
+		cout << "Current Department Number: " << depNum << endl;
+		cout << endl;
+		cout << "To change the department number you will need to " << endl;
+		cout << "enter the new department number" << endl;
+		cout << endl;
+		cout << "To return to MAIN MENU : enter the number 0" << endl;
+		
+		// Space
+		cout << endl << endl;
+		
+		// Ask for and store the input, then clear the cin buffer
+		cout << "Please enter the NEW department number : ";
+		cin >> empID;
+		cin.clear();
+		
+		// Do they want to go back?
+		if(empID==0){
+			return;
 		return;
-	}else{
-		// Change the department number.
-		cout << "New Department Number" << endl;
+		}else{
+			// Change the department number.
+			cout << "New Department Number" << endl;
+		}
 	}
-
 } // empEditDep
 
 /**@fun empList(void)
- *	^	This menu screen allows the user to print out a list of employees by id or name.
+ *	^	This menu screen allows the user to print out a list of employees 
+ *		by id or name.
  *
  */
  void empList(void){
 	
+ 	// Lazily clearing the screen
+ 	clearScreen();
+ 	
 	// Variables
 	int empID=-99;
 	
@@ -235,10 +255,10 @@ void mainMenu(void){
 	// Space
 	cout << endl << endl;
 	
-	// Ask for input
-	cout << "Please enter the Employee ID number: __";
-	
+	// Ask for and store the input, then clear the cin buffer
+	cout << "Please enter the Employee ID number : ";
 	cin >> empID;
+	cin.clear(); // Clear the cin buffer
 	
 	// Do they want to go back?
 	if(empID==3){
@@ -257,31 +277,62 @@ void mainMenu(void){
 } // empList
 
 /**@fun menuContinue()
- *	^	This will ask the user if they wish to continue
- * @return Bool
+ *	^	This will ask the user if they wish to continue.  It will ask a max of
+ *		20 times for the correct input, before it will quit the program.
  * 
+ * @return Bool
+ * 	T	This will return the user to the main menu
+ *	F	This will exit the program
  */
-bool menuContinue(){
+bool menuContinue(void){
 	
 	// Variables
-	bool next = false;
+	string next;
+	int ground = 0;
 	
-	// Ask for input
-	cout << "Do you wish to continue? (Y/N)";
+	// Ask them if they wish to continue
+	cout << "Do you wish to continue? (Y/N) : ";
 	
-	// Store input
-	cin >> next;
-	
-	if(next){
-		mainMenu();
+	// This will ask them 20 times for the correct input (Y, y, N, n).
+	while(ground<20){
+				
+		// Store, then clear cin
+		cin >> next;
+		cin.clear();
+		
+		// Check the input
+		if(next.find("Y")!=string::npos || next.find("y")!=string::npos)
+			return true;
+		if(next.find("N")!=string::npos || next.find("n")!=string::npos)
+			return false;
+		
+		// Ask them again, if they are wrong.
+		cout << "Please enter (Y/N) : ";
+		
+		// Increment this so this while loop isn't infinite.
+		ground++;
 	}
- }
+	
+	// if they reach the ground, quit the program
+	return false;
+}//menuContinue
+
+/**@fun ClearScreen(void)
+ *	^	This will insert a bunch of new lines to cludge a new screen.
+ *
+ * @note NoremacSkich | 2014/31/3
+ *	^	Originally came from http://goo.gl/ZyMku8
+ */
+void clearScreen(void)
+{
+	cout << string( 50, '\n' );
+}
+
 // ====== main driver ==============================
 int main(void)
 {
 	do{
 		mainMenu();
-		
 	}while(menuContinue());
 	
 	/*testread();  // see what is read form the text file

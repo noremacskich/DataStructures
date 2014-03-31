@@ -1,19 +1,24 @@
-Menu Creation
+More work on Menu
 
-Created:
-1 	Program.cpp : void mainMenu(void);
-2	Program.cpp : void empView(void);
-3	Program.cpp : void empList(void);
-4	Program.cpp : void empEditId(void);
-5	Program.cpp : void empEditDep(int empID);
-6	Program.cpp : void menuContinue();
-7	.gitignore
+Modified:
+1	bool menuContinue(void)
 
 Reasons:
-1	This is the main menu
-2	Enter ID Number to view employee
-3	This lists out the employees in ascending order
-4	This will allow user to select an employee ID to edit
-5	This will allow user to edit the department number of employee
-6	Asks if you want to continue, and returns true for yes and false for no.
-7	Updated it to not include class videos
+1	Gave it the ability to recognize a few different ways of saying yes and no.
+	Will ask 20 times for the correct input before it quits the program.
+
+
+Added
+1	bool menuContinue(void)
+2	void ClearScreen(void)
+
+Reasons
+1	Added it to the function prototypes list.
+2	Need a way to clear the screen for each menu
+
+
+Removed
+1	empEditDep(int empID)
+
+Reason:
+1	Combined it with empEditId, this will make menu work better.
