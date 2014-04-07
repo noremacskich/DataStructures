@@ -52,6 +52,94 @@ EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
 //========================================================
 
 // FUNCTIONS
+/**@fun print_Ascending(INDEX_TYPE index[], int count)
+ *	^	This prints out employee info in ascending order
+ *
+ * @param index[] | INDEX_TYPE
+ *	^	this is the index that is to be printed out
+ *
+ * @param count | Integer
+ *	^	This is how many records there are in the index
+ *
+ */
+void print_Ascending(INDEX_TYPE index[], const int count){
+	// create the file variable
+	fstream infile;
+	
+	// Open the file to read the stored binary
+	infile.open(BIN_FILENAME, ios::in|ios::binary);
+	
+	// Check to make sure that file was opened
+	if(infile.fail()){
+		cout << "The empl.dat file is missing" << endl;
+		exit(0);
+	}
+
+	// Create a Temporary Employee Record
+	EMPL_TYPE empl_rec;
+	
+	int i = 0;
+	
+	// Print out the header
+	cout << "===== Sorted Binary File Contents =================" << endl;
+	
+	// Loop through employees, stop when count reaches 0
+	while (i<=count)
+	{
+		// Get to the record position
+		// record position * record size, starting location
+		infile.seekg(index[i].RID * sizeof(EMPL_TYPE), ios::beg);
+		
+		// attempt to read in the employee data
+		infile.read((char *) &empl_rec,sizeof(empl_rec));
+		
+		// display the employee data
+		cout << "Dept: " << empl_rec.dept_num;
+		cout << "  Name: " << empl_rec.name;
+		cout << "  age : " << empl_rec.age;
+		cout << "  emplid : " << empl_rec.emplid << endl;
+		
+
+		// Increment the current count
+		i++;
+	}
+	cout << "==========================================" << endl;
+
+	// close the file
+	infile.close();
+}
+ 
+/**@sort_index(INDEX_TYPE index[], int count)
+ *	^	This will sort the list in Ascending Order
+ *
+ * @param index[] | INDEX_TYPE
+ *	^	this is the index to sort
+ *	R	This will modify inputed list.
+ *
+ * @param count | Constant Integer
+ *	^	This is the total number of records in the index
+ *
+ * @note NoremacSkich | 2014/4/7
+ *	^	This function does not write the sorted changes to the file.
+ */
+bool sort_index(INDEX_TYPE index[], const int count)
+{	
+	INDEX_TYPE tmpIndex;
+	
+	for(int i = 0; i < count; i++){
+		for( int j = 0; j < count - 1; j++)
+		{
+			if(index[j].key > index[j+1].key){
+				tmpIndex = index[j];
+				index[j]= index[j+1];
+				index[j+1] = tmpIndex;
+			}
+		}
+	}
+	
+	return true;
+}
+
 
 /**@get_RID(int employeeID, INDEX_TYPE index[])
  *	^	This will lookup the record id value based on employee ID parameter
@@ -90,9 +178,17 @@ int get_RID(int employeeID, INDEX_TYPE index[], int count){
 	return -99;
 	
 }
-/**@set_employee(const int RID)
+/**@set_employee(EMPL_TYPE empl, const int RID)
  *	^	This will update the employee record
  *
+ * @param empl | EMPL_TYPE
+ *	^	This is the employee record that you wish to update
+ *
+ * @param RID | constant Integer
+ *	^	This is the position of the employee record you wish to update
+ *
+ * @note NoremacSkich | 2014/4/7
+ *	^	The class put together this function.
  */
 void set_employee(EMPL_TYPE empl, const int RID)
 {
@@ -103,6 +199,12 @@ void set_employee(EMPL_TYPE empl, const int RID)
 	// Assign variable to file stream, and open it in the right mode
 	// Need ios::in, otherwise you loose all info in the data
 	infile.open (BIN_FILENAME, ios::in|ios::out|ios::binary);
+	
+	// Check to make sure that the file opened
+	if(infile.fail()){
+		cout << "The empl.dat file is missing" << endl;
+		exit(1);
+	}
 	
 	// seekg and seekp use same pointer for file manipulation
 	// record position * record size, starting location
@@ -134,7 +236,13 @@ EMPL_TYPE get_employee(const int RID)
 	
 	// Open the file to read the stored binary
 	infile.open(BIN_FILENAME, ios::in|ios::binary);
-
+	
+	// Check to make sure that the file opened
+	if(infile.fail()){
+		cout << "The empl.dat file is missing" << endl;
+		exit(1);
+	}
+	
 	// Create a Temporary Employee Record
 	EMPL_TYPE temp;
 	
@@ -166,6 +274,9 @@ EMPL_TYPE get_employee(const int RID)
  * @param c | int &
  *	^	This variable will hold the total number of records
  *	R	This will return the total number of records
+ *
+  * @note NoremacSkich | 2014/4/7
+ *	^	The class put together this function.
  */
 void build_index(INDEX_TYPE i[], int & c){
 	
@@ -181,8 +292,9 @@ void build_index(INDEX_TYPE i[], int & c){
 	// Check to make sure that the file opened correctly
 	// C++ doesnt throw an error if it can't open a file, it sets a flag 
 	// instead
+	// Check to make sure that the file opened
 	if(infile.fail()){
-		cout << " OPEN FILE ERROR " << endl;
+		cout << "The empl.dat file is missing" << endl;
 		exit(1);
 	}
 	
@@ -367,15 +479,8 @@ void empEditDep(int impId, int depNum){
 	cout << "2) List ordered by Employee Name {sorry not available}" << endl;
 	cout << "3) Return to MAIN MENU" << endl;
 	cout << endl;
-	cout << "Please enter your selection from the menu [1-3]" << endl;
+	cout << "Please enter your selection from the menu [1-3] : " << endl;
 	
-	// Space
-	cout << endl << endl;
-	
-	// Ask for and store the input, then clear the cin buffer
-	cout << "Please enter the Employee ID number : ";
-
-
 } // empList
 
 /**@fun menuContinue()
@@ -437,6 +542,8 @@ int main(void)
 	INDEX_TYPE index[100];
 	int count;
 	
+	// Has the index been sorted?
+	bool indexSorted = false;
 	// Build the index
 	build_index(index, count);
 	
@@ -469,8 +576,23 @@ int main(void)
 	set_employee(empl_rec, rid);
 	cout << "Restart to See if age of " << empl_rec.name << " is " << empl_rec.age << endl;
 	// Restart program to see if worked
-	*/
 	
+	
+	// Print out current list
+	cout << "Current List" << endl;
+	for (int i=0; i<count; i++)
+		cout << index[i].key << " " << index[i].RID << endl;
+	
+	// Sort the list
+	sort_index(index, count);
+	
+	// Print out New list
+	cout << "Sorted List" << endl;
+	for (int i=0; i<count; i++)
+		cout << index[i].key << " " << index[i].RID << endl;
+	
+	print_Ascending(index, count);
+	*/
 	
 	
 	// Variables
@@ -601,7 +723,8 @@ int main(void)
 					//Perform action based on their choice
 					switch (empID){
 						case 1:
-							cout << "Order by ID" << endl;
+							sort_index(index, count);
+							print_Ascending(index, count);
 							
 							// Pause to let user look at output
 							myPause();

@@ -1,38 +1,30 @@
 Build Index, RID, get and set employee
 
 Created:
-1	get_employee(const int RID)
-2	build_index(INDEX_TYPE i[], int & c)
-3	set_employee(EMPL_TYPE empl, const int RID)
-4	get_RID(int employeeID, INDEX_TYPE index[], int count)
+1	sort_index(INDEX_TYPE index[], const int count)
+2	print_Ascending(INDEX_TYPE index[], int count)
 
 Reasons:
-1	This will get the employee info from the data file based on the RID
-2	This will allow us to build the array once and reference throughout the 
-	program.  This came from class.
-3	This will update the employee record in the data file.
-4	This will lookup the record id value based on the employee id parameter
+1	We need a way to sort the names of the employees
+2	This prints out employee info in ascending order
 
 Modified:
-1	main(void)
+1	void set_employee(EMPL_TYPE empl, const int RID)
+2	void build_index(INDEX_TYPE i[], int & c)
+3	void get_employee(const int RID)
+4	empList(void)
 
 Reasons:
-1	Updated the first option in the menu to lookup and display employee info.
-	The got the update department number option done
-	
-	
-Added:
-1	A2 - Indexes Prework 2014.pdf
-2	A2 - index 2014.pdf
-3	Random Access Files.pdf
-
-Reasons:
-1-3	These are the resource files he gave us.
-2	This is the Assignment
+1-2	Updated the function documentation
+1,3	Added clause to make sure that the empl.dat file is accessible
+4	Got rid of enter employee ID, and spare lines before that
 
 Todo:
 1	Sanitize Inputs
 2	Sort Index
 3	Clean up Code
 4	Recheck requirements
+5	when using arrow keys on input, program goes into infinite loop
+6	Need message for non existant employee
+7	Program crashes if trying to change non existant employee department number
 
