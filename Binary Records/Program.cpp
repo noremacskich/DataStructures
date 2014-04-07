@@ -84,7 +84,7 @@ void print_Ascending(INDEX_TYPE index[], const int count){
 	cout << "===== Sorted Binary File Contents =================" << endl;
 	
 	// Loop through employees, stop when count reaches 0
-	while (i<=count)
+	while (i<count)
 	{
 		// Get to the record position
 		// record position * record size, starting location
@@ -600,6 +600,7 @@ int main(void)
 	int emplid_num;
 	int empID;
 	int depNum=-99;
+	int rid = -100;
 	EMPL_TYPE empl_rec; // This is the employee record currently being used
 
 	do{
@@ -634,8 +635,18 @@ int main(void)
 					break; // To the main menu
 				}
 				
-				// call the function to handle the logic
-				empl_rec = get_employee(get_RID(emplid_num, index, count));
+				// Get the rid based on employee ID
+				rid = get_RID(emplid_num, index, count);
+				
+				// Check to make sure that employee exists
+				if(rid<0){
+					cout << "Employee doesn't exist" << endl;
+					// Pause to let user look at output
+					myPause();
+					break; // to the main menu
+				}
+				
+				empl_rec = get_employee(rid);
 				
 				// Display what we got.
 				cout << "Dept: " << empl_rec.dept_num;
@@ -669,9 +680,20 @@ int main(void)
 					break; // To the main menu
 				}
 				
+				// Get the rid based on employee ID
+				rid = get_RID(empID, index, count);
+				
+				// Check to make sure that employee exists
+				if(rid<0){
+					cout << "Employee doesn't exist" << endl;
+					// Pause to let user look at output
+					myPause();
+					break; // to the main menu
+				}
+				
 				// We now have the employee ID to lookup
 				// Function to lookup the department number of employee
-				empl_rec = get_employee(get_RID(empID, index, count));
+				empl_rec = get_employee(rid);
 			
 				// Clear the Screen.
 				clearScreen();
@@ -693,14 +715,19 @@ int main(void)
 				// This is the function that changes the department number.
 				empl_rec.dept_num = depNum;
 				
+				// Get the rid based on employee ID
+				rid = get_RID(empID, index, count);
+				
+				// Check to make sure that employee exists
+				if(rid<0){
+					cout << "Employee doesn't exist" << endl;
+					// Pause to let user look at output
+					myPause();
+					break; // to the main menu
+				}
+				
 				// Write out the changes to file
-				set_employee(empl_rec, get_RID(empID, index, count));
-				
-				// Display the changes
-				
-				
-				// Pause to let user look at output
-				myPause();
+				set_employee(empl_rec, rid);
 				
 				break; // To the main menu
 				
@@ -731,7 +758,7 @@ int main(void)
 							
 							break;
 						case 2:
-							cout << "Order by Name" << endl;
+							cout << "This Feature is not available" << endl;
 							// Pause to let user look at output
 							myPause();
 							break;
