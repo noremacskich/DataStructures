@@ -1,12 +1,19 @@
-Watched the class video . . .
+Redid the edit employee ID, added pauses after ouputs
 
 Modified:
-1	mainMenu(void)
-2	empView(void)
-3	empEditId(void)
-4	empList(void)
+1	empEditId(void)
+2	main(void)
 
 Reasons:
-1-4	Watched the video on menus from class, modifying mine to match his way of
-	doing it.  To me it looks messy, but it does make sense.
-	
+1	Removed all the logic to this, and put it into the menu driver.
+2	Added a do while loop to the list all employees sub menu.  I also added
+	pauses after each menu with output.
+
+Added:
+1	empEditDep(int impId, int depNum)
+2	myPause(void)
+
+Reasons:
+1	This displays the second page to the edit employee menu.
+2	This will allow the user to read the output from the function before 
+	continuing.  Function came from the sort program.

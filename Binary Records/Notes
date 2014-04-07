@@ -1,0 +1,232 @@
+// This is the array that will hold the employee records
+struct INDEX_TYPE{
+	int key; // will be the emplid
+	int RID; // location of record in the file
+};
+
+//Menu Driver from Class
+
+int main_choice;
+
+do{
+	main_menu();
+	
+	cin >> main_choice;
+	
+	switch(main_choice){
+		case 1: 
+			view_menu();
+			break;
+		case 2:
+			edit_menu();
+			break;
+		case 3:
+			list_menu();
+			break;
+		case 4:
+			break;
+		
+		default:
+			cout << "oops :)" << endl;
+	}
+}while(main_choice != 4);
+
+void view_display(void){
+	cout << "Enter Something : ";
+	cin >> c	
+}
+
+
+void view_logic(string displayReturn){
+
+
+	
+}
+
+
+view_logic(view_display());
+
+int main_choice;
+
+do{
+	main_menu();
+	
+	cin >> main_choice;
+	
+	switch(main_choice){
+		case 1: 
+			view_menu();
+			cin >> emplid_num;
+			logic(print());
+			if(emplid_num==4){
+				break;
+			// call the function to handle the logic
+			
+			break;
+		case 2:
+			edit_menu();
+			break;
+		case 3:
+			list_menu();
+			break;
+		case 4:
+			break;
+		
+		default:
+			cout << "oops :)" << endl;
+	}
+}while(main_choice != 4);
+
+
+
+INDEX_TYPE index[100];
+
+
+int count; // the number of items in the index
+// i[] - pass in as a pointer
+void build_index(INDEX_TYPE i[], int & c){
+	
+	// Create a temporary record holder
+	EMPL_TYPE temp_emp;
+	
+	// create file variable
+	fstream infile;
+	
+	// Open the File for input as an binary file
+	infile.open(BIN_FILENAME, ios::in|ios::binary);
+	
+	// Check to make sure that the file opened correctly
+	// C++ doesnt throw an error if it can't open a file, it sets a flag 
+	// instead
+	if(infile.fail()){
+		cout << " OPEN FILE ERROR " << endl;
+		exit(1);
+	}
+	
+	// Bring in the record
+	// "Prime the Pump"
+	// sizeof() is an other operator, will get the size of input
+	// Typecast (char *) 
+	infile.read( (char *) &temp_empl, sizeof(temp_empl) )
+	
+	c = 0;
+	
+	
+	// .eof() end of file
+	// .faile read somehow failed
+	while(!infile.fail() && !infile.eof()){
+		
+		// Store the employee ID
+		i[c].key = temp_empl.emplid;
+		
+		// Store the index location
+		i[c].rid = c;
+		
+		// Increase the index location
+		c++;
+		
+		// Already at the next record, automatically does this.
+		infile.read( (char *) &temp_empl, sizeof(temp_empl) );
+	}
+	
+	// Close the file
+	infile.close();
+	
+}
+
+main
+
+build_index(index, count);
+cout << index[1].key << endl;
+
+
+empl_type get_employee(const int RID)
+{
+
+	// create the file variable
+	fstream infile
+	// assign the variable to actual file
+	
+	// 
+
+	EMPTL_TYPE temp;
+	fstream infile;
+	
+	
+	infile.open (..)
+	
+	// record position * record size, starting location
+	infile.seekg(RID * sizeof(imptype), ios::beg)
+	
+	// typecast
+	// where you want it, how many bytes do you want?
+	infile.read((char *) &tmp, sizeof(EMPL_TYPE)); 
+	
+	// close the file
+	infile.close;
+	
+	// return the employee record
+	return temp;
+}
+
+
+empl_type set_employee(const int RID)
+{
+
+	// create the file variable
+	fstream infile
+	// assign the variable to actual file
+	
+	// Open in the right mode
+
+	EMPTL_TYPE temp;
+	fstream infile;
+	
+	// Need ios::in, otherwise you loose all info in the data
+	infile.open (bin_filename, ios::in|ios::out|ios::binary);
+	
+	// seekg and seekp use same pointer for file manipulation
+	// record position * record size, starting location
+	infile.seekg(RID * sizeof(imptype), ios::beg)
+	
+	// typecast
+	// where you want it, how many bytes do you want?
+	infile.write((char *) &tmp, sizeof(EMPL_TYPE)); 
+	
+	// close the file
+	infile.close;
+	
+	// return the employee record
+	return temp;
+}
+
+t = get_employee(1);
+empltype t;
+t.dept_num = 1000;
+write_record(t, 1);
+
+use b2014.cpp to list out the records in 
+
+g++ file.cpp -o binary file
+
+
+void sort_index(indextype idx[], int coutn)
+{	
+	index_type tmp;
+	
+	for(int i = 0; i< count; i++)
+		for int j=0; j<count-1; j++)
+		{
+			if(idx[j].key > idx[j+1].key){
+				tmp = idx[j];
+				idx[j]= idx[j+1];
+				idx[j_1] = tmp;
+			}
+		}
+}
+
+for (int i=0; i<coutn; i++)
+	cout << index[i].key << " " << index[i].rid << endl;
+	
+	
+
