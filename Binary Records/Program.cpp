@@ -31,6 +31,11 @@ struct EMPL_TYPE
 	int emplid;		// is a unique key for indexing
 };
 
+// This is the array that will hold the employee records
+struct INDEX_TYPE{
+	int key; // will be the emplid
+	int RID; // location of record in the file
+};
 // =================   PROTOTYPES ========================
 int main(void); // program main driver
 void mainMenu(void); // This is the main menu
@@ -38,6 +43,7 @@ void empView(void); // Enter ID Number to view employee
 void empList(void); // This lists out the employees in ascending order
 void empEditId(void); // This will allow user to select an employee ID to edit
 bool menuContinue(void); // This will ask user if s/he wants to continue
+void myPause(void); // This waits for the user input
 void clearScreen(void); // Quick and dirty clear screen function
 void testread(void);  // testing only!! reading text lines from file
 void create_data_file(void); // Process records and create the binary file
@@ -46,11 +52,169 @@ EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
 //========================================================
 
 // FUNCTIONS
-/************** [myPause] ******************************
-* myPause() 
-*
-* returns:   nothing
-* ******************************************/
+
+/**@get_RID(int employeeID, INDEX_TYPE index[])
+ *	^	This will lookup the record id value based on employee ID parameter
+ *
+ * @param employeeID | Integer
+ *	^	This is the employee ID to lookup
+ *
+ * @param index[] | INDEX_TYPE
+ *	^	This is the index with which we use to lookup the record ID
+ *
+ * @param count | Integer
+ *	^	This is the number of records in the current index.
+ *
+ * @return Integer
+ *	^	This will return the record id.  If it doesn't find the employee, it
+ *		will return a -99
+ *	D	-99
+ */
+int get_RID(int employeeID, INDEX_TYPE index[], int count){
+
+	// Need a counter for number of records processed
+	int i=0;
+	
+	while(i <= count){
+		// Check to see if this is employee
+		if(index[i].key == employeeID){
+			// If so, return the RID
+			return index[i].RID;
+		}
+		
+		// If not, increment the counter
+		i++;
+	}
+	
+	// Not found, return -99
+	return -99;
+	
+}
+/**@set_employee(const int RID)
+ *	^	This will update the employee record
+ *
+ */
+void set_employee(EMPL_TYPE empl, const int RID)
+{
+
+	// create the file variable
+	fstream infile;
+
+	// Assign variable to file stream, and open it in the right mode
+	// Need ios::in, otherwise you loose all info in the data
+	infile.open (BIN_FILENAME, ios::in|ios::out|ios::binary);
+	
+	// seekg and seekp use same pointer for file manipulation
+	// record position * record size, starting location
+	infile.seekg(RID * sizeof(EMPL_TYPE), ios::beg);
+	
+	// typecast
+	// where you want it, how many bytes do you want?
+	infile.write((char *) &empl, sizeof(EMPL_TYPE)); 
+	
+	// close the file
+	infile.close();
+
+}
+
+/**@fun get_employee(const int RID)
+ *	^	This will get the employee info from the data file based on the RID
+ *
+ * @return EMPL_TYPE
+ *	^	This will return the employee object
+ *
+ * @note NoremacSkich | 2014/4/7
+ *	^	The class put together this function.
+ */
+EMPL_TYPE get_employee(const int RID)
+{
+
+	// create the file variable
+	fstream infile;
+	
+	// Open the file to read the stored binary
+	infile.open(BIN_FILENAME, ios::in|ios::binary);
+
+	// Create a Temporary Employee Record
+	EMPL_TYPE temp;
+	
+	// Get to the record position
+	// record position * record size, starting location
+	infile.seekg(RID * sizeof(EMPL_TYPE), ios::beg);
+	
+	// typecast
+	// where you want it, how many bytes do you want?
+	infile.read((char *) &temp, sizeof(EMPL_TYPE)); 
+	
+	// close the file
+	infile.close();
+	
+	// return the employee record
+	return temp;
+}
+
+//int count; // the number of items in the index
+// i[] - pass in as a pointer
+
+/**@build_index(INDEX_TYPE i[], int & c)
+ *	^	This populates the index array, and record count
+ *
+ * @param i[] | INDEX_TYPE
+ *	^	This passes in an blank index array through a pointer
+ *	R	This will return a filled in array.
+ *
+ * @param c | int &
+ *	^	This variable will hold the total number of records
+ *	R	This will return the total number of records
+ */
+void build_index(INDEX_TYPE i[], int & c){
+	
+	// Create a temporary record holder
+	EMPL_TYPE temp_emp;
+	
+	// create file variable
+	fstream infile;
+	
+	// Open the File for input as an binary file
+	infile.open(BIN_FILENAME, ios::in|ios::binary);
+	
+	// Check to make sure that the file opened correctly
+	// C++ doesnt throw an error if it can't open a file, it sets a flag 
+	// instead
+	if(infile.fail()){
+		cout << " OPEN FILE ERROR " << endl;
+		exit(1);
+	}
+	
+	// Bring in the record
+	// "Prime the Pump"
+	// sizeof() is an other operator, will get the size of input
+	// Typecast (char *) 
+	infile.read( (char *) & temp_emp, sizeof(temp_emp) );
+	
+	c = 0;
+		
+	// .eof() end of file
+	// .fail read somehow failed
+	while(!infile.fail() && !infile.eof()){
+		
+		// Store the employee ID
+		i[c].key = temp_emp.emplid;
+		
+		// Store the index location
+		i[c].RID = c;
+		
+		// Increase the index location
+		c++;
+		
+		// Already at the next record, automatically does this.
+		infile.read( (char *) &temp_emp, sizeof(temp_emp) );
+	}
+	
+	// Close the file
+	infile.close();
+	
+}
 
 /**@fun myPause(void)
  *	^	This is a routine to print a prompt and get a user input.  This is 
@@ -269,11 +433,52 @@ void clearScreen(void)
 // ====== main driver ==============================
 int main(void)
 {
+	
+	INDEX_TYPE index[100];
+	int count;
+	
+	// Build the index
+	build_index(index, count);
+	
+	// Test the build index
+	//cout << index[1].key << endl;
+	/*
+	int empID = 5;
+	int rid = 0;
+	
+	// Test the get RID
+	rid = get_RID(empID, index, count);
+	cout << "RID: " << rid << endl;
+	
+	// Test the get employee
+	EMPL_TYPE empl_rec;
+	empl_rec = get_employee(rid);
+	
+	// Display what we got.
+	cout << "Dept: " << empl_rec.dept_num;
+	cout << "  Name: " << empl_rec.name;
+	cout << "  age : " << empl_rec.age;
+	cout << "  emplid : " << empl_rec.emplid << endl;
+	
+	// Test the write employee
+	
+	// Change a Value
+	empl_rec.age = 4;
+	
+	// store it into the data file	
+	set_employee(empl_rec, rid);
+	cout << "Restart to See if age of " << empl_rec.name << " is " << empl_rec.age << endl;
+	// Restart program to see if worked
+	*/
+	
+	
+	
 	// Variables
 	int main_choice;
 	int emplid_num;
 	int empID;
 	int depNum=-99;
+	EMPL_TYPE empl_rec; // This is the employee record currently being used
 
 	do{
 		// Clear the Screen.
@@ -295,8 +500,11 @@ int main(void)
 				// Print the Employee Menu
 				empView();
 				
-				// Grab their choice
+				// Store then sanitize their input
 				cin >> emplid_num;
+				cin.clear();
+				
+				// Now Sanitize the input
 				
 				// If user presses 4, it means they want to go back to main
 				// menu
@@ -305,7 +513,13 @@ int main(void)
 				}
 				
 				// call the function to handle the logic
-				cout << "Looked up Employee " << emplid_num << "." << endl;
+				empl_rec = get_employee(get_RID(emplid_num, index, count));
+				
+				// Display what we got.
+				cout << "Dept: " << empl_rec.dept_num;
+				cout << "  Name: " << empl_rec.name;
+				cout << "  age : " << empl_rec.age;
+				cout << "  emplid : " << empl_rec.emplid << endl;
 				
 				// Pause to let user look at output
 				myPause();
@@ -325,6 +539,9 @@ int main(void)
 				cin >> empID;
 				cin.clear();
 				
+				// Sanitize the input
+				
+				
 				// Do they want to go back?
 				if(empID==0){
 					break; // To the main menu
@@ -332,25 +549,33 @@ int main(void)
 				
 				// We now have the employee ID to lookup
 				// Function to lookup the department number of employee
-				depNum=55;
-							
+				empl_rec = get_employee(get_RID(empID, index, count));
+			
 				// Clear the Screen.
 				clearScreen();
 				
 				// Now Display the jEdit Employee Menu, Page 2
-				empEditDep(empID, depNum);
+				empEditDep(empl_rec.emplid, empl_rec.dept_num);
 				
 				// Store then sanitize the cin buffer
 				cin >> depNum;
 				cin.clear();
 		
+				// Sanitize the input
+				
 				// Check to see if they wish to go back to main menu
 				if(depNum==0){
 					break; // To the main menu
 				}
 				
 				// This is the function that changes the department number.
-				cout << "New Department Number " << depNum <<endl;
+				empl_rec.dept_num = depNum;
+				
+				// Write out the changes to file
+				set_employee(empl_rec, get_RID(empID, index, count));
+				
+				// Display the changes
+				
 				
 				// Pause to let user look at output
 				myPause();
@@ -359,6 +584,8 @@ int main(void)
 				
 				
 			case 3:
+				
+				// This is a new menu, so need another do while loop
 				do{
 					
 					// Clear the Screen.
@@ -409,7 +636,7 @@ int main(void)
 		}
 	}while(main_choice != 4);
 
-	
+
 	/*testread();  // see what is read form the text file
 	
 	create_data_file(); // create the binary file
