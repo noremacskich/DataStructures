@@ -5,7 +5,7 @@
 //===============================================================
 //   PROGRAM:  Assignment #2
 //   AUTHOR :  Cameron Hicks
-//   DUE    :  N/A
+//   DUE    :  4/8/2014 11:01 AM
 //   DESCRIPTION:
 //          This program wil be used to create a test file of records to
 //    be used in Assignment #2 (Spring 2014)
@@ -14,10 +14,8 @@ using namespace std;
 
 // GLOBAL CONSTANT ====================================
 const int MAXNAME = 31; // Empl names 30 in length + 1, can have spaces
-const int MAXLINE = 81; // Emply data line from text file  80 in length +1, comma delimited : Don't need this, only reading from data file
-
-char TEXT_FILENAME[] = "a2.txt"; //text file name : Don't Need anymore
 char BIN_FILENAME[] = "empl.dat";// binary file name
+
 
 // GLOBAL TYPE DEF  =====================================
 
@@ -36,19 +34,51 @@ struct INDEX_TYPE{
 	int key; // will be the emplid
 	int RID; // location of record in the file
 };
+
 // =================   PROTOTYPES ========================
-int main(void); // program main driver
-void mainMenu(void); // This is the main menu
-void empView(void); // Enter ID Number to view employee
-void empList(void); // This lists out the employees in ascending order
-void empEditId(void); // This will allow user to select an employee ID to edit
-bool menuContinue(void); // This will ask user if s/he wants to continue
-void myPause(void); // This waits for the user input
-void clearScreen(void); // Quick and dirty clear screen function
-void testread(void);  // testing only!! reading text lines from file
-void create_data_file(void); // Process records and create the binary file
-void read_binary_file(void); // testing only!!  look at what is in the Binary file
-EMPL_TYPE parse_record_line(char line[]); // parse a line into a record
+// program main driver
+int main(void); 
+
+// This prints out employee info in ascending order
+void print_Ascending(INDEX_TYPE index[], const int count); 
+
+// This will sort the index in Ascending Order
+bool sort_index(INDEX_TYPE index[], const int count); 
+
+// This will lookup the record id value based on employee id parameter
+int get_RID(int employeeID, INDEX_TYPE index[], int count); 
+
+// This will update the employee record
+void set_employee(EMPL_TYPE empl, const int RID);
+
+// This will get the employee info from the data file based on the RID
+EMPL_TYPE get_employee(const int RID);
+
+// This populates the index array, and record count
+void build_index(INDEX_TYPE i[], int & c);
+
+// This is a routine to print a prompt and get a user input.  This is so that when something is 
+// sent to the screen, it can be seen before the screen is cleared.
+void myPause(void);
+
+// This will print out the text for the main menu.
+void mainMenu(void);
+
+// This will print out the text for viewing the employee
+void empView(void);
+
+// This will print out the text for the first page of editing the department ID.
+void empEditId(void); 
+
+// This will print out the second page for editing the department ID.
+void empEditDep(int impId, int depNum);
+
+// This prints out the text for the sorting employees menu.
+void empList(void);
+
+// This will insert a bunch of new lines to cludge a new screen.
+void clearScreen(void); 
+
 //========================================================
 
 // FUNCTIONS
@@ -109,8 +139,8 @@ void print_Ascending(INDEX_TYPE index[], const int count){
 	infile.close();
 }
  
-/**@sort_index(INDEX_TYPE index[], int count)
- *	^	This will sort the list in Ascending Order
+/**@fun sort_index(INDEX_TYPE index[], int count)
+ *	^	This will sort the index in Ascending Order
  *
  * @param index[] | INDEX_TYPE
  *	^	this is the index to sort
@@ -118,6 +148,10 @@ void print_Ascending(INDEX_TYPE index[], const int count){
  *
  * @param count | Constant Integer
  *	^	This is the total number of records in the index
+ *
+ * @return Boolean
+ *	T	The index has been sorted
+ *	F	This should never happen
  *
  * @note NoremacSkich | 2014/4/7
  *	^	This function does not write the sorted changes to the file.
@@ -139,7 +173,6 @@ bool sort_index(INDEX_TYPE index[], const int count)
 	
 	return true;
 }
-
 
 /**@get_RID(int employeeID, INDEX_TYPE index[])
  *	^	This will lookup the record id value based on employee ID parameter
@@ -178,6 +211,7 @@ int get_RID(int employeeID, INDEX_TYPE index[], int count){
 	return -99;
 	
 }
+
 /**@set_employee(EMPL_TYPE empl, const int RID)
  *	^	This will update the employee record
  *
@@ -264,7 +298,7 @@ EMPL_TYPE get_employee(const int RID)
 //int count; // the number of items in the index
 // i[] - pass in as a pointer
 
-/**@build_index(INDEX_TYPE i[], int & c)
+/**@fun build_index(INDEX_TYPE i[], int & c)
  *	^	This populates the index array, and record count
  *
  * @param i[] | INDEX_TYPE
@@ -305,10 +339,11 @@ void build_index(INDEX_TYPE i[], int & c){
 	infile.read( (char *) & temp_emp, sizeof(temp_emp) );
 	
 	c = 0;
-		
+	
+	int j = 0;
 	// .eof() end of file
 	// .fail read somehow failed
-	while(!infile.fail() && !infile.eof()){
+	while(!infile.fail() && !infile.eof() && j != 100){
 		
 		// Store the employee ID
 		i[c].key = temp_emp.emplid;
@@ -321,6 +356,8 @@ void build_index(INDEX_TYPE i[], int & c){
 		
 		// Already at the next record, automatically does this.
 		infile.read( (char *) &temp_emp, sizeof(temp_emp) );
+		
+		j++;
 	}
 	
 	// Close the file
@@ -344,7 +381,7 @@ void myPause(void)
 }
 
 /**@fun mainMenu(void)
- *	^	This will be the primary menu for the user to interact with
+ *	^	This will print out the text for the main menu.
  * 
  */
 void mainMenu(void){
@@ -370,10 +407,10 @@ void mainMenu(void){
 }// mainMenu
 
 /**@fun empView(void)
- *	^	This menu screen allows the user to enter the employee ID number to view
+ *	^	This will print out the text for viewing the employee
  *
  */
- void empView(void){
+void empView(void){
 	
 	// Title
 	cout << "VIEW EMPLOYEE" << endl;
@@ -396,8 +433,7 @@ void mainMenu(void){
 } // empView
 
 /**@fun empEditId(void)
- *	^	This menu screen allows the user to enter the employee ID that they 
- *		wish to edit.
+ *	^	This will print out the text for the first page of editing the department ID.
  *
  */
  void empEditId(void){
@@ -422,8 +458,9 @@ void mainMenu(void){
 	cout << "Please enter the Employee ID number : ";
 	
  }
-/**@fun empEditDep(int impNum, int depNum)
- *	^	This will display the 2nd page of the edit employee menu
+
+ /**@fun empEditDep(int impNum, int depNum)
+ *	^	This will print out the second page for editing the department ID.
  *	
  * @var impId | Integer
  *	^	This is the employee ID
@@ -460,8 +497,7 @@ void empEditDep(int impId, int depNum){
 } // empEditDep
 
 /**@fun empList(void)
- *	^	This menu screen allows the user to print out a list of employees 
- *		by id or name.
+ *	^	This prints out the text for the sorting employees menu.
  *
  */
  void empList(void){
@@ -482,47 +518,6 @@ void empEditDep(int impId, int depNum){
 	cout << "Please enter your selection from the menu [1-3] : " << endl;
 	
 } // empList
-
-/**@fun menuContinue()
- *	^	This will ask the user if they wish to continue.  It will ask a max of
- *		20 times for the correct input, before it will quit the program.
- * 
- * @return Bool
- * 	T	This will return the user to the main menu
- *	F	This will exit the program
- */
-bool menuContinue(void){
-	
-	// Variables
-	string next;
-	int ground = 0;
-	
-	// Ask them if they wish to continue
-	cout << "Do you wish to continue? (Y/N) : ";
-	
-	// This will ask them 20 times for the correct input (Y, y, N, n).
-	while(ground<20){
-				
-		// Store, then clear cin
-		cin >> next;
-		cin.clear();
-		
-		// Check the input
-		if(next.find("Y")!=string::npos || next.find("y")!=string::npos)
-			return true;
-		if(next.find("N")!=string::npos || next.find("n")!=string::npos)
-			return false;
-		
-		// Ask them again, if they are wrong.
-		cout << "Please enter (Y/N) : ";
-		
-		// Increment this so this while loop isn't infinite.
-		ground++;
-	}
-	
-	// if they reach the ground, quit the program
-	return false;
-}//menuContinue
 
 /**@fun ClearScreen(void)
  *	^	This will insert a bunch of new lines to cludge a new screen.
@@ -550,12 +545,17 @@ int main(void)
 	// Test the build index
 	//cout << index[1].key << endl;
 	/*
-	int empID = 5;
+	int empID = 100;
 	int rid = 0;
 	
+	cout << "RID: " << rid << endl;
+	cout << "count: " << count << endl;
 	// Test the get RID
 	rid = get_RID(empID, index, count);
 	cout << "RID: " << rid << endl;
+	cout << "count: " << count << endl;
+	
+	
 	
 	// Test the get employee
 	EMPL_TYPE empl_rec;
@@ -616,11 +616,14 @@ int main(void)
 		if(cin.fail()){
 			// It failed, print it out
 			cout << "Input Failed" << endl;
-			// clear the buffer, then continue
+						// clear the buffer, then continue
 			cin.clear();
 			cin.ignore();
+			myPause();
+
 			continue;
 		}
+		
 		switch(main_choice){
 			
 			
@@ -638,12 +641,12 @@ int main(void)
 				if(cin.fail()){
 					
 					// It failed, print it out
-					cout << "Input Failed" << endl;
+					cout << "Input Failed, Going to main menu" << endl;
 					
 					// clear the buffer, then continue
 					cin.clear();
 					cin.ignore();
-					
+					myPause();
 					break;
 				}
 
@@ -682,7 +685,8 @@ int main(void)
 			case 2:
 				// Clear the Screen.
 				clearScreen();
-				
+				cin.clear();
+				cin.ignore();
 				// Display the Edit Employee Menu, Page 1
 				empEditId();
 				
@@ -694,12 +698,12 @@ int main(void)
 				if(cin.fail()){
 					
 					// It failed, print it out
-					cout << "Input Failed" << endl;
-					
+					cout << "Input Failed, Going to main menu" << endl;
+										
 					// clear the buffer, then continue
 					cin.clear();
 					cin.ignore();
-					
+					myPause();
 					break;
 				}
 				
@@ -728,7 +732,7 @@ int main(void)
 				
 				// Now Display the jEdit Employee Menu, Page 2
 				empEditDep(empl_rec.emplid, empl_rec.dept_num);
-				
+								
 				// Store then sanitize the cin buffer
 				cin >> depNum;
 				cin.clear();
@@ -737,12 +741,12 @@ int main(void)
 				if(cin.fail()){
 					
 					// It failed, print it out
-					cout << "Input Failed" << endl;
-					
+					cout << "Input Failed, Going to main menu" << endl;
+										
 					// clear the buffer, then continue
 					cin.clear();
 					cin.ignore();
-					
+					myPause();
 					break;
 				}
 				
@@ -784,27 +788,28 @@ int main(void)
 					
 					// Take their menu choice
 					cin >> empID;
-					cin.clear(); // Clear the cin buffer
 					
 					// Sanitize the input
 					if(cin.fail()){
 						
 						// It failed, print it out
-						cout << "Input Failed" << endl;
-						
+						cout << "Input Failed, Going back to employee list menu" << endl;
+												
 						// clear the buffer, then continue
 						cin.clear();
 						cin.ignore();
-						
+						myPause();
 						// Reset empID
 						empID = 0;
 						continue;
 					}
-					
+
 					//Perform action based on their choice
 					switch (empID){
 						case 1:
-							sort_index(index, count);
+							if(!indexSorted){
+								indexSorted = sort_index(index, count);
+							}
 							print_Ascending(index, count);
 							
 							// Pause to let user look at output
@@ -839,136 +844,9 @@ int main(void)
 				cout << "oops :)" << endl;
 		}
 	}while(main_choice != 4);
-
-
-	/*testread();  // see what is read form the text file
 	
-	create_data_file(); // create the binary file
-	
-	read_binary_file( );  // look at what is inside the binary file
-	*/
+	// Exit the program gracefully, without errors
 	return 0;
 }
-
-// ====== testread ======================================
-void testread(void)
-{
-	char input_line[MAXLINE];
-	
-	ifstream empl_infile;  		// declare file variable for input
-	empl_infile.open(TEXT_FILENAME); // assign physical file to FV and open
-	
-	cout << "====== TEXT FILE CONTENT  ========" << endl;
-	while(!empl_infile.get(input_line,MAXLINE).eof())  // attempt to read next line up to maxline characters
-	{
-		cout << input_line << endl;
-		
-		empl_infile.ignore(256,'\n');  // clear any char remaining on taht line
-	}
-	cout << "==================================" << endl;
-	empl_infile.close(); // close the file
-}	
-
-// ====== parse_record_line (down and dirty way :) ====================
-EMPL_TYPE parse_record_line(char line[])
-{
-	// the line parameter is one text line from the text file as a C string
-	EMPL_TYPE parsed_record;
-	int i = 0;
-	int j = 0;
-	
-	char temp_arg[MAXLINE];
-	//arg 1
-	while(line[i] != ',') //build temp_arg up to comma
-	{
-		temp_arg[j] = line[i];
-		i++; j++;
-	}
-     
-	i++; // move by the comma
-	temp_arg[j] = '\0'; // make tem_arg a C string
-	parsed_record.dept_num = atoi(temp_arg); // atoi() convert char string to integer 
-	// and assign to dept_num in record
-	//arg 2
-	j = 0;
-	while(line[i] != ',') // build argument up to comma
-	{
-		temp_arg[j] = line[i];
-		i++; j++;
-	}
-     
-	i++;  // move by the comma
-	temp_arg[j] = '\0';	 // make temp_arg a C String
-	strcpy(parsed_record.name,temp_arg); //copy C string to name C string in record
-	
-	// arg 3
-	j=0;
-	while(line[i] != ',') // build argument up to comma
-	{
-		temp_arg[j] = line[i];
-		i++; j++;
-	}
-	i++;
-	temp_arg[j] = '\0';  // make temp_arg a C String
-	parsed_record.age = atoi(temp_arg);  // atoi() convert char to integer
-	// assign to age in record
-	//arg 4;
-	j=0;
-	while(line[i] != '\0')
-	{
-		temp_arg[j] = line[i];
-		i++; j++;
-	}
-	temp_arg[j] = '\0';  // make temp_arg a C string
-	parsed_record.emplid = atoi(temp_arg); // atoi() convert char to integer
-	// assign to emplid in record	
-	
-	return parsed_record;  // return the filled record
-	
-}
-// ====== create_data_file=========================
-void create_data_file(void)
-{
-	char input_line[MAXLINE];
-	ifstream empl_infile;    // assign the file variable for input
-	empl_infile.open(TEXT_FILENAME); // open the file
-	
-	EMPL_TYPE empl_rec; //record to be filled and then written out
-	fstream empl_outfile; // assign file variable for output
-	empl_outfile.open(BIN_FILENAME,ios::out|ios::binary); // open file an se mode for Binary file
-	// output  and input(to not truncate)
-	
-	while (!empl_infile.get(input_line,MAXLINE).eof()) // attempt to get a line from text file
-	{
-		empl_infile.ignore(256,'\n');  // move past more than 81 characters if they exist on line
-		empl_rec = parse_record_line(input_line); //parse the text line into a record
-		empl_outfile.write((char *) &empl_rec, sizeof(empl_rec)); // write the record out to the Binary file
-	}
-	
-	empl_infile.close();  // close the text file
-	empl_outfile.close(); // close the binary file
-}
-// ====== read_binary_file ============================
-void read_binary_file(void)
-{
-	EMPL_TYPE   empl_rec;  // record to be read into from file
-	fstream empl_infile;   // file variable (no mode set)
-	empl_infile.open(BIN_FILENAME,ios::in|ios::binary); // open binary file for reading
-	empl_infile.read((char *) &empl_rec,sizeof(empl_rec)); //attempt to read in a record
-	cout << endl;
-	cout << "===== BINARY FILE CONTENT =================" << endl;
-	while (!empl_infile.eof())  // while the last thing read was not the End Of File marker
-	{
-		cout << "Dept: " << empl_rec.dept_num;
-		cout << "  Name: " << empl_rec.name;
-		cout << "  age : " << empl_rec.age;
-		cout << "  emplid : " << empl_rec.emplid << endl;
-		
-		empl_infile.read((char *) &empl_rec,sizeof(empl_rec));  // attempt to read in the next record
-	}
-	cout << "==========================================" << endl;
-	empl_infile.close(); // close the file
-}
-
 
 

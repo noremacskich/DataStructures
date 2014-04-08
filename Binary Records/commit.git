@@ -1,20 +1,26 @@
-Input Sanitization
+Code Cleanup and Final Checks
 
-Modified:
-1	main(void)
+Removed:
+1	bool menuContinue(void)
+2	void testread(void)
+3	void create_data_file(void)
+4	void read_binary_file(void)
+5	EMPL_TYPE parse_record_line(char line[])
 
 Reasons:
-1	The inputs are now sanitized.  
+1-5	This program no longer needs it.
 
+Modified:
+1	build_index(INDEX_TYPE i[], int & c)
+
+Reasons:
+1	Added clause to prevent reading more than 100 records, seems to fix the 
+	incorrect count number problem.
+	
 Fixed:
-1	Sanitize Inputs
-2	Sort Index
-5	when using arrow keys on input, program goes into infinite loop
-
-Todo:
 1	Clean up Code
 2	Recheck requirements
-3	Should find way of keeping on same screen when the input is wrong.
-
-Note:
-1	Forgot to include Sort Index for the last commit.
+	
+Todo:
+1	Should find way of keeping on same screen when the input is wrong.
+2	Use a consistant naming convention for the functions.
