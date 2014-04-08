@@ -612,7 +612,15 @@ int main(void)
 		
 		// Get their choice
 		cin >> main_choice;
-		
+		// Check if input failed
+		if(cin.fail()){
+			// It failed, print it out
+			cout << "Input Failed" << endl;
+			// clear the buffer, then continue
+			cin.clear();
+			cin.ignore();
+			continue;
+		}
 		switch(main_choice){
 			
 			
@@ -625,10 +633,20 @@ int main(void)
 				
 				// Store then sanitize their input
 				cin >> emplid_num;
-				cin.clear();
 				
-				// Now Sanitize the input
-				
+				// Sanitize the input
+				if(cin.fail()){
+					
+					// It failed, print it out
+					cout << "Input Failed" << endl;
+					
+					// clear the buffer, then continue
+					cin.clear();
+					cin.ignore();
+					
+					break;
+				}
+
 				// If user presses 4, it means they want to go back to main
 				// menu
 				if(emplid_num==4){
@@ -673,7 +691,17 @@ int main(void)
 				cin.clear();
 				
 				// Sanitize the input
-				
+				if(cin.fail()){
+					
+					// It failed, print it out
+					cout << "Input Failed" << endl;
+					
+					// clear the buffer, then continue
+					cin.clear();
+					cin.ignore();
+					
+					break;
+				}
 				
 				// Do they want to go back?
 				if(empID==0){
@@ -706,6 +734,17 @@ int main(void)
 				cin.clear();
 		
 				// Sanitize the input
+				if(cin.fail()){
+					
+					// It failed, print it out
+					cout << "Input Failed" << endl;
+					
+					// clear the buffer, then continue
+					cin.clear();
+					cin.ignore();
+					
+					break;
+				}
 				
 				// Check to see if they wish to go back to main menu
 				if(depNum==0){
@@ -746,7 +785,22 @@ int main(void)
 					// Take their menu choice
 					cin >> empID;
 					cin.clear(); // Clear the cin buffer
-				
+					
+					// Sanitize the input
+					if(cin.fail()){
+						
+						// It failed, print it out
+						cout << "Input Failed" << endl;
+						
+						// clear the buffer, then continue
+						cin.clear();
+						cin.ignore();
+						
+						// Reset empID
+						empID = 0;
+						continue;
+					}
+					
 					//Perform action based on their choice
 					switch (empID){
 						case 1:

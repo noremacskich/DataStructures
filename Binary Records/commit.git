@@ -1,20 +1,20 @@
-Non Existant Employees Fix
+Input Sanitization
 
 Modified:
-1	int main(void)
+1	main(void)
 
 Reasons:
-1	Added logic to check to see if employee actually exists.
+1	The inputs are now sanitized.  
 
-Completed:
-6	Need message for non existant employee
-7	Program crashes if trying to change non existant employee department number
-
-Todo:
+Fixed:
 1	Sanitize Inputs
 2	Sort Index
-3	Clean up Code
-4	Recheck requirements
 5	when using arrow keys on input, program goes into infinite loop
 
+Todo:
+1	Clean up Code
+2	Recheck requirements
+3	Should find way of keeping on same screen when the input is wrong.
 
+Note:
+1	Forgot to include Sort Index for the last commit.
