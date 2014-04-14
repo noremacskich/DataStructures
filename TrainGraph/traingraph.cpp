@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <cstring>
+#include <string>
 #include <stdlib.h>
 //===============================================================
 //   PROGRAM:  Assignment #3
@@ -17,10 +17,10 @@ using namespace std;
 // GLOBAL CONSTANT ====================================
 
 // This is where the stations.dat file is located
-const string stationsFile = "stations.dat";
+string stationsFile = "stations.dat";
 
 // this is where the trains.dat file is located
-const string trainsFile = "trains.dat";
+string trainsFile = "trains.dat";
 
 
 
@@ -123,11 +123,34 @@ void clearScreen(void);
  *
  * @author NoremacSkich | 2014/4/14
  *
+ * @todo NoremacSkich | 2014/4/14
+ *	^	Convert each line from the file into a data structure.
+ *
  * @return 
  *	^	See the stations[] parameter.
  */
 void getStations(string filePath, STATIONS stations[]){
+		// create the file variable
+	ifstream infile;
+	string line;
 	
+	// Open the file to read the schedule contents
+	infile.open("stations.dat");
+	
+	// Check to make sure that the file opened
+	if( infile.fail() ){
+		cout << "The " << stationsFile << " file is missing." << endl;
+		exit(1);
+	}
+	
+	// While there is a line to get
+	while(getline(infile, line)){
+		cout << line << endl;
+			
+	}
+	
+	// Close the file
+	infile.close();
 }
 /**@fun showStations(STATIONS stations[])
  *	^	This will print out the stations and their ID to the consumer.
@@ -157,11 +180,35 @@ void showStations(STATIONS stations[]){
  *
  * @author NoremacSkich | 2014/4/14
  *
+ * @todo NoremacSkich | 2014/4/14
+ *	^	Convert each line from the file into a data structure.
+ *
  * @return 
  *	^	See the trainSched[] parameter.
  */
 void getTrains(string filePath, TRAINS trainSched[]){
 	
+	// create the file variable
+	ifstream infile;
+	string line;
+	
+	// Open the file to read the schedule contents
+	infile.open("trains.dat");
+	
+	// Check to make sure that the file opened
+	if( infile.fail() ){
+		cout << "The " << trainsFile << " file is missing." << endl;
+		exit(1);
+	}
+	
+	// While there is a line to get
+	while(getline(infile, line)){
+		cout << line << endl;
+			
+	}
+	
+	// Close the file
+	infile.close();
 }
 
 /**@fun showTrainSched(TRAINS trainSched[])
@@ -223,7 +270,13 @@ void clearScreen(void)
 // ====== main driver ==============================
 int main(void)
 {
+	TRAINS trainSched[100];
+	STATIONS stations[100];
 	
+	getTrains(trainsFile,trainSched);
+	getStations(stationsFile, stations);
+	
+	/*
 	int main_choice;
 
 	do{
@@ -284,7 +337,7 @@ int main(void)
 				cout << "oops :)" << endl;
 		}
 	}while(main_choice != 4);
-	
+	*/
 	// Exit the program gracefully, without errors
 	return 0;
 }

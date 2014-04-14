@@ -1,9 +1,24 @@
-Reorganized the layout of the file
-
+Data Files and Accessing
 
 Modified:
-1	traingraph.cpp
+1	void getStations(string filePath, STATIONS stations[])
+2	void getTrains(string filePath, TRAINS trainSched[])
 
 Reasons:
-1	Put the long descriptions with the functions, leaving the prototypes with 
-	a simple description.
+1-2	I got them to read in the text files.  Still need to extract the data from
+	the line itself, and store it in an array.
+
+Added:
+1	trains.dat
+2	stations.dat
+
+Reasons:
+1	This file holds the train data. The data layout is as follows:
+	(Departure Station) (Arrival Station) (Departure Time) (Arrival Time)
+2	This file holds the station info.  The data layout is as follows:
+	(Station ID) (Station Name)
+	
+Note:
+1	Data for trains.dat and stations.dat came from generatedata.com
+
+
