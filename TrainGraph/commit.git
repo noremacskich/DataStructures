@@ -1,12 +1,22 @@
-Train Graph - Initail Commit
+Program Outline Created
 
 Created:
-1	2014 A3 Graphs.pdf
-2	2014 Report Formats Trains.pdf
-3	All Pairs Shortest Path.pdf
-4	commit.git
+1	traingraph.cpp
+2		int main(void)
+3		void getStations(string filePath, STATIONS stations[])
+4		void getTrains(string filePath, TRAINS trainSched[])
+5		void showMainMenu(void)
+6		void showStations(STATIONS stations[])
+7		void showTrainSched(STATIONS stations[])
+8		void myPause(void)
+9		void clearScreen(void)
 
 Reasons:
-1-3	These are the files the teacher gave us to create the program.
-4	This is the file that will hold all changes between commits.
+1	This is the primary program. This file is going to be based off of the 
+	Binary Records/program.cpp file.
+2	Added the main menu driver.
+3-4	We need a way to get the information from the file into an usable array
+5-7	These all display output
+8	This will pause the console to allow the user to see the output
+9	This will clear the screen.
 
