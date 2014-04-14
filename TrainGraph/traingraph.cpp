@@ -80,7 +80,36 @@ struct TRAINS{
 	int Arrival_Time;
 };
 
+
+// ================= PROTOTYPES ========================
+
 // ================= PROTOTYPES FOR STATIONS ========================
+// this will print out all the stations.
+void showStations(STATIONS stations[]);
+// This will get the stations from file and return them to the stations array
+void getStations(string filePath, STATIONS stations[]);
+
+// ================= PROTOTYPES FOR TRAINS ========================
+// This will print out all the id's and names for the train station
+void showTrainSched(STATIONS stations[]);
+// This will get the trains from file and return them to the trainSched array
+void getTrains(string filePath, TRAINS trainSched[]);
+
+// ================= PROTOTYPES FOR MISC ========================
+// This shows the primary menu.
+void showMainMenu(void);
+// program main driver
+int main(void); 
+// This is a routine to print a prompt and get a user input.  This is so that 
+// when something is sent to the screen, it can be seen before the screen is 
+// cleared.
+void myPause(void);
+
+// This will insert a bunch of new lines to cludge a new screen.
+void clearScreen(void); 
+
+//=========================== FUNCTIONS ===========================
+// ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
  *	^	This will open up the inputed file, and return an array of stations.
  *	N	This function assumes that spaces are being used to distinguish the 
@@ -97,9 +126,23 @@ struct TRAINS{
  * @return 
  *	^	See the stations[] parameter.
  */
-void getStations(string filePath, STATIONS stations[]);
-
-// ================= PROTOTYPES FOR TRAINS ========================
+void getStations(string filePath, STATIONS stations[]){
+	
+}
+/**@fun showStations(STATIONS stations[])
+ *	^	This will print out the stations and their ID to the consumer.
+ * 
+ * @param stations[] | STATIONS
+ *	^	This array should hold the station name and their associated station 
+ *		ID.
+ *
+ * @author NoremacSkich | 2014/4/14
+ *
+ */
+void showStations(STATIONS stations[]){
+	
+}
+// ================= TRAINS ========================
 /**@fun getTrains(string filePath, TRAINS trainSched[])
  *	^	This will open up the inputed file, and return an array of the train
  *		schedule.
@@ -117,29 +160,9 @@ void getStations(string filePath, STATIONS stations[]);
  * @return 
  *	^	See the trainSched[] parameter.
  */
-void getTrains(string filePath, TRAINS trainSched[]);
-
-// ================= PROTOTYPES FOR THE OUTPUT ========================
-/**@fun showMainMenu(void)
- *	^	This will print out the main menu.
- *
- * @author NoremacSkich | 2014/4/14
- *
- */
- 
-void showMainMenu(void);
-
-/**@fun showStations(STATIONS stations[])
- *	^	This will print out the stations and their ID to the consumer.
- * 
- * @param stations[] | STATIONS
- *	^	This array should hold the station name and their associated station 
- *		ID.
- *
- * @author NoremacSkich | 2014/4/14
- *
- */
-void showStations(STATIONS stations[]);
+void getTrains(string filePath, TRAINS trainSched[]){
+	
+}
 
 /**@fun showTrainSched(TRAINS trainSched[])
  *	^	This will print out the stations and their ID to the consumer.
@@ -151,42 +174,26 @@ void showStations(STATIONS stations[]);
  * @author NoremacSkich | 2014/4/14
  *
  */
-void showTrainSched(STATIONS stations[]);
-
-
-// program main driver
-int main(void); 
-
-// This is a routine to print a prompt and get a user input.  This is so that 
-// when something is sent to the screen, it can be seen before the screen is 
-// cleared.
-void myPause(void);
-
-// This will insert a bunch of new lines to cludge a new screen.
-void clearScreen(void); 
-
-//=========================== FUNCTIONS ===========================
-void showMainMenu(void){
-	
-}
-
-void showStations(STATIONS stations[]){
-	
-}
-
 void showTrainSched(STATIONS stations[]){
 	
 }
 
-void getTrains(string filePath, TRAINS trainSched[]){
-	
+// ================= OTHER ========================
+/**@fun showMainMenu(void)
+ *	^	This will print out the main menu.
+ *
+ * @author NoremacSkich | 2014/4/14
+ *
+ */
+ 
+void showMainMenu(void){
 	
 }
 
-void getStations(string filePath, STATIONS stations[]){
-	
-	
-}
+
+
+
+
 /**@fun myPause(void)
  *	^	This is a routine to print a prompt and get a user input.  This is 
  *		so that when something is sent to the screen, it can be seen before 
