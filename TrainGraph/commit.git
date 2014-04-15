@@ -1,24 +1,22 @@
-Data Files and Accessing
-
-Modified:
-1	void getStations(string filePath, STATIONS stations[])
-2	void getTrains(string filePath, TRAINS trainSched[])
-
-Reasons:
-1-2	I got them to read in the text files.  Still need to extract the data from
-	the line itself, and store it in an array.
+Time Conversions & Station Menu Layout
 
 Added:
-1	trains.dat
-2	stations.dat
+1	string minToHour(int minutes)
+2	string convertInt(int number)
+3	interface.txt
+
+Reason:
+1	This will convert the inputed minutes into a human friendly format
+2	This will convert the inputed number into a string.
+3	This file shows what I believe the interface should look like
+
+Modified:
+1	void showStations(STATIONS stations[])
 
 Reasons:
-1	This file holds the train data. The data layout is as follows:
-	(Departure Station) (Arrival Station) (Departure Time) (Arrival Time)
-2	This file holds the station info.  The data layout is as follows:
-	(Station ID) (Station Name)
-	
+1	This will now print out this layout: 
+	 ###. &&&&&&&&&&&&&&&&&&&&&&&&& ###. &&&&&&&&&&&&&&&&&&&&&&&&&
+
 Note:
-1	Data for trains.dat and stations.dat came from generatedata.com
-
-
+1	This has compile errors, but I wanted to capture what my initial thought on
+	the time was.

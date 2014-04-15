@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <string>
 #include <stdlib.h>
@@ -22,7 +23,8 @@ string stationsFile = "stations.dat";
 // this is where the trains.dat file is located
 string trainsFile = "trains.dat";
 
-
+const int terminalWidth = 80;
+const int terminalHeight = 20;
 
 // GLOBAL TYPE DEF  =====================================
 
@@ -108,6 +110,9 @@ void myPause(void);
 // This will insert a bunch of new lines to cludge a new screen.
 void clearScreen(void); 
 
+// converts an integer into a string
+string convertInt(int number);
+
 //=========================== FUNCTIONS ===========================
 // ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
@@ -162,8 +167,13 @@ void getStations(string filePath, STATIONS stations[]){
  * @author NoremacSkich | 2014/4/14
  *
  */
-void showStations(STATIONS stations[]){
-	
+void showStations(STATIONS stations[], int numStations){
+	/*
+	if(numStations > (terminalHeight - 4)){
+		
+	}
+	cout << " " << setw(3) << stations[i].Number << ". " << setw(25) << stations[i].Name;
+	*/
 }
 // ================= TRAINS ========================
 /**@fun getTrains(string filePath, TRAINS trainSched[])
@@ -234,7 +244,12 @@ void showTrainSched(STATIONS stations[]){
  */
  
 void showMainMenu(void){
+	cout << "Main Menu" << endl;
 	
+	cout << "1: List of Stations" << endl;
+	cout << "2: Find Shortest Travel Time on Trains" << endl;
+	cout << "3: Find Shortest Time Overall" << endl;
+	cout << "4: exit" << endl;
 }
 
 
@@ -267,16 +282,89 @@ void clearScreen(void)
 	cout << string( 50, '\n' );
 }
 
+/**@fun minToHour(int min)
+ *	^	This will convert the inputted minutes into an hour:minute xm format
+ * @param min | int
+ *	^	This is the number of minutes in a day to be converted.
+ *	N	This function assumes that the inputed number is no greater than 1440
+ *
+ * @return string
+ *	^	This will return a string formated as:
+ *	F	HH:MM APM
+ *		Where H is hours, M is minutes, APM is either am or pm
+ */
+string minToHour(int minutes){
+	
+	string numHours = "00"; // Stores the text version of the number of hours
+	string numMinutes = "00"; // Stores the text version of the minutes
+	string apm = "am"; // Stores the text version of am or pm
+	
+	int tmpMinutes; // this is the number of minutes into an hour
+	
+	// This is the number of minutes into an hour
+	tmpMinutes = minutes % 60;
+	
+	// Now find the number of hours
+	int tmpHours = (minutes - tmpMinutes) / 60;
+	
+	// check to see if it is over 12 hours
+	if(tmpHours >= 12){
+		
+		// If it is, we need to change the apm string.
+		apm = "pm";
+		
+		// If the time is past noon, subtract 12 from it.
+		if(tmpHours > 12){
+			
+			// get the noon hour
+			tmpHours -= 12;
+		}
+	}
+	
+	numHours = convertInt(tmpHours);
+	numMinutes = convertInt(tmpMinutes);
+	
+	
+	string complete << numHours << ":" << numMinutes << " " << apm;
+	
+	return complete;
+}
+
+/**@fun convertInt(int number)
+ *	^	Converts an integer into a number using standard libraries.
+ * @param number | integer
+ *	^	This is the number to be converted
+ *
+ * @returns
+ *	^	A String of the number.
+ *
+ * @author Bazzy | 2009/2/14
+ *	S	http://goo.gl/wC32J
+ * 
+ * @reqs <sstream>
+ *
+ */
+string convertInt(int number)
+{
+   stringstream ss;//create a stringstream
+   ss << number;//add number to the stream
+   return ss.str();//return a string with the contents of the stream
+}
+
 // ====== main driver ==============================
 int main(void)
 {
-	TRAINS trainSched[100];
-	STATIONS stations[100];
+	//TRAINS trainSched[100];
+	//STATIONS stations[100];
 	
-	getTrains(trainsFile,trainSched);
-	getStations(stationsFile, stations);
+	//getTrains(trainsFile,trainSched);
+	//getStations(stationsFile, stations);
 	
-	/*
+	for(int i=0; i<1440; i++)
+		minToHour(i);
+	}
+	
+	if(false){
 	int main_choice;
 
 	do{
@@ -284,7 +372,7 @@ int main(void)
 		clearScreen();
 		
 		// Display the main menu
-		
+		showMainMenu();
 		
 		// Get their choice
 		cin >> main_choice;
@@ -305,39 +393,31 @@ int main(void)
 			
 			
 			case 1: 
-
-				
-				
+				cout << "List of Stations" << endl;
+				myPause();
 				break; // To the main menu
-				
 				
 			case 2:
-				
-				
-				
+				cout << "Shortest Travel Time on Trains" << endl;
+				myPause();
 				break; // To the main menu
-				
 				
 			case 3:
-				
-									
+				cout << "Find Shortest Time Overall" << endl;
+				myPause();			
 				break; // To the main menu
-				
-				
 				
 			case 4:
 				cout << "End Program" << endl;
 				
 				break; // To the main menu
 			
-				
-				
-				
 			default:
 				cout << "oops :)" << endl;
+				
 		}
 	}while(main_choice != 4);
-	*/
+	}
 	// Exit the program gracefully, without errors
 	return 0;
 }
