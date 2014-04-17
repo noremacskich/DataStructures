@@ -1,22 +1,25 @@
-Time Conversions & Station Menu Layout
-
-Added:
-1	string minToHour(int minutes)
-2	string convertInt(int number)
-3	interface.txt
-
-Reason:
-1	This will convert the inputed minutes into a human friendly format
-2	This will convert the inputed number into a string.
-3	This file shows what I believe the interface should look like
+Minutes, Array Storage, and Show Stations update
 
 Modified:
 1	void showStations(STATIONS stations[])
+2	string minToHour(int minutes)
+3	void getStations(string filePath, STATIONS stationlist[])
+4	void getTrains(string filePath, TRAINS trainSched[])
 
 Reasons:
 1	This will now print out this layout: 
-	 ###. &&&&&&&&&&&&&&&&&&&&&&&&& ###. &&&&&&&&&&&&&&&&&&&&&&&&&
+	###. &&&&&&&&&&&&&&&&&&&&&&&&& ###. &&&&&&&&&&&&&&&&&&&&&&&&&
+	Some left over code from another idea, clean up later.
+2	This is my second approach to the function
+3	Got the input stored in the stationArray array
+4	Got the input stored in the trainArray array
 
-Note:
-1	This has compile errors, but I wanted to capture what my initial thought on
-	the time was.
+Notes:
+1	keeping around the string convertInt(int number) function number just in case
+	I will need it later.
+	
+Created:
+1	printSingleStation(STATION stationList[], int stationNumber)
+
+Reasons:
+1	This prints the station info like this: " ###. XXXXXXX"

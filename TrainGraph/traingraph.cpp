@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip> // setw
 #include <sstream>
 #include <fstream>
 #include <string>
@@ -113,6 +114,8 @@ void clearScreen(void);
 // converts an integer into a string
 string convertInt(int number);
 
+// This prints out the 2 column station info
+string printSingleStation(STATIONS stationList[], int stationNumber);
 //=========================== FUNCTIONS ===========================
 // ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
@@ -134,7 +137,7 @@ string convertInt(int number);
  * @return 
  *	^	See the stations[] parameter.
  */
-void getStations(string filePath, STATIONS stations[]){
+void getStations(string filePath, STATIONS stationlist[]){
 		// create the file variable
 	ifstream infile;
 	string line;
@@ -142,16 +145,23 @@ void getStations(string filePath, STATIONS stations[]){
 	// Open the file to read the schedule contents
 	infile.open("stations.dat");
 	
-	// Check to make sure that the file opened
-	if( infile.fail() ){
-		cout << "The " << stationsFile << " file is missing." << endl;
-		exit(1);
-	}
+	int i=0;
 	
-	// While there is a line to get
-	while(getline(infile, line)){
-		cout << line << endl;
-			
+	// While there is a line to get, and there fewer than 100 records
+	while(!infile.eof() && i < 100){
+		
+		// Store the Number
+		infile >> stationlist[i].Number;
+		
+		// Store the Name
+		getline(infile, stationlist[i].Name);
+		
+		// This removes the first character in the string
+		// from http://goo.gl/4dg3Lh
+		stationlist[i].Name = stationlist[i].Name.substr(1).append(stationlist[i].Name.substr(0,1));
+		
+		// Goto next spot in the array.
+		i++;
 	}
 	
 	// Close the file
@@ -164,17 +174,96 @@ void getStations(string filePath, STATIONS stations[]){
  *	^	This array should hold the station name and their associated station 
  *		ID.
  *
+ * @param numRows | Integer
+ *	^	This is the number of rows that needs to be printed
+ *
+ * @param startRecord | Integer
+ *	^	This is record that the first column starts on.
+ *
+ * @reqs terminalHeight
+ *	^	Tells me what the height of the terminal is.
+ *
  * @author NoremacSkich | 2014/4/14
  *
  */
-void showStations(STATIONS stations[], int numStations){
-	/*
-	if(numStations > (terminalHeight - 4)){
+void showStations(STATIONS stationList[], int numStations){
+	// Things to know:
+	//		Number of rows to print out, this is the column height
+	//		The list of stations
+	//		The starting record
+	
+	// This is the number of columns that can be displayed at once
+	int pageColumnCount = 2;
+	
+	// The number of lines that are being used by other parts of the gui
+	int interfaceLines = 5;
+	
+	// This computes the number of items that can be in each list
+	int columnHeight = terminalHeight - interfaceLines;
+	
+	// This calculates the number of rows that will be on the last column.
+	int leftovers = numStations % columnHeight;
+	
+	// this calculates the number of columns that will be needed to be displayed
+	int columnCount = (numStations - leftovers) / columnHeight;
+	
+	// If there were leftovers, then we need to add an additional column
+	if(leftovers > 0){
+		// Then add one more column
+		columnCount++;
+	}
+	
+	int currentPage = 1;
+	// This is the starting record for the current page
+	int startRecord = currentPage * columnHeight * 2;
+	
+	// This is the current line.
+	int currentLine = 0;
+	
+	//Print out lines until the page is done.
+	while(currentLine <= columnHeight){
+		// Print out the station for the first column, then a space
+		cout << printSingleStation(stationList, (currentLine)) << " ";
+		// Next print out the 2nd column by adding together the current line
+		// that is currently being displayed, and the number of rows in a column
+		// (columnHeight) and add one.
+		cout << printSingleStation(stationList, (columnHeight + currentLine + 1)) << endl;
+		// Increment to the next line.
+		currentLine++;
+	}
+	
+	
+	// For now print out the stations one by one
+	for(int i=0; i<numStations; i++){
 		
 	}
-	cout << " " << setw(3) << stations[i].Number << ". " << setw(25) << stations[i].Name;
-	*/
+
 }
+/**@fun printSingleStation(STATIONS stationList[], int stationNumber)
+ *	^	This will print out the station number and name
+ *
+ * @param stationList[] | STATIONS
+ *	^	This is the list of stations
+ *
+ * @param stationNumber | Integer
+ *	^	This is the station ID that this function will print.
+ * @note NoremacSkich | 2014/4/17
+ *	^	This will output: ###. XXXXX
+ *		There is no new line character.
+ */
+string printSingleStation(STATIONS stationList[], int stationNumber){
+	stringstream stationColumns;
+	stationColumns << " " << right << setw(3) << stationList[stationNumber].Number << ". ";
+	stationColumns << left << setw(25) << stationList[stationNumber].Name;
+	/*
+	// Test the single station list input
+	for(int i=0; i<100; i++){
+		cout << printSingleStation( stationlist, i ) << endl;
+	}
+	*/
+	return stationColumns.str();
+}
+
 // ================= TRAINS ========================
 /**@fun getTrains(string filePath, TRAINS trainSched[])
  *	^	This will open up the inputed file, and return an array of the train
@@ -211,11 +300,29 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		exit(1);
 	}
 	
-	// While there is a line to get
-	while(getline(infile, line)){
-		cout << line << endl;
-			
+	int i=0;
+	
+	// While there is a line to get, and there fewer than 100 records
+	while(!infile.eof() && i < 100){
+		// Store the train info
+		infile >> trainSched[i].Departure_Station;
+		infile >> trainSched[i].Arrival_Station;
+		infile >> trainSched[i].Departure_Time;
+		infile >> trainSched[i].Arrival_Time;
+		
+		// Goto next spot in the array.
+		i++;
 	}
+	
+	/*
+	// See if print out the train data
+	for(int i=0; i<100; i++){
+		cout << trainSched[i].Departure_Station << "| : |";
+		cout << trainSched[i].Arrival_Station  << "| : |";
+		cout << trainSched[i].Departure_Time  << "| : |";
+		cout << trainSched[i].Arrival_Time  << "| : |" << endl;
+	}
+	*/
 	
 	// Close the file
 	infile.close();
@@ -242,8 +349,7 @@ void showTrainSched(STATIONS stations[]){
  * @author NoremacSkich | 2014/4/14
  *
  */
- 
-void showMainMenu(void){
+ void showMainMenu(void){
 	cout << "Main Menu" << endl;
 	
 	cout << "1: List of Stations" << endl;
@@ -251,10 +357,6 @@ void showMainMenu(void){
 	cout << "3: Find Shortest Time Overall" << endl;
 	cout << "4: exit" << endl;
 }
-
-
-
-
 
 /**@fun myPause(void)
  *	^	This is a routine to print a prompt and get a user input.  This is 
@@ -284,6 +386,7 @@ void clearScreen(void)
 
 /**@fun minToHour(int min)
  *	^	This will convert the inputted minutes into an hour:minute xm format
+ *
  * @param min | int
  *	^	This is the number of minutes in a day to be converted.
  *	N	This function assumes that the inputed number is no greater than 1440
@@ -292,22 +395,26 @@ void clearScreen(void)
  *	^	This will return a string formated as:
  *	F	HH:MM APM
  *		Where H is hours, M is minutes, APM is either am or pm
+ *
+ * @reqs <sstream>, <iomanip>
+ *
+ * @author NoremacSkich | 2014/4/15
+ *
  */
 string minToHour(int minutes){
 	
-	string numHours = "00"; // Stores the text version of the number of hours
-	string numMinutes = "00"; // Stores the text version of the minutes
-	string apm = "am"; // Stores the text version of am or pm
+	int tmpMinutes = 0;			// this is the number of minutes into an hour
+	int tmpHours = 0;			// this is the number of hours into a day
+	string apm = "am";			// Stores the text version of am or pm
+	stringstream returnString;	// This will hold the HH:MM APM string
 	
-	int tmpMinutes; // this is the number of minutes into an hour
-	
-	// This is the number of minutes into an hour
+	// Calculate the number of minutes into an hour.
 	tmpMinutes = minutes % 60;
 	
-	// Now find the number of hours
-	int tmpHours = (minutes - tmpMinutes) / 60;
+	// Now calculate the number of hours into the day.
+	tmpHours = (minutes - tmpMinutes) / 60;
 	
-	// check to see if it is over 12 hours
+	// Check to see if we are past noon
 	if(tmpHours >= 12){
 		
 		// If it is, we need to change the apm string.
@@ -315,23 +422,48 @@ string minToHour(int minutes){
 		
 		// If the time is past noon, subtract 12 from it.
 		if(tmpHours > 12){
-			
 			// get the noon hour
 			tmpHours -= 12;
 		}
+		
+	// If it isn't noon, check to make sure that it isn't midnight
+	}else	
+	
+	// Check to see if it is midnight
+	if(tmpHours < 1){
+		// Since it is midnight, we need to change the 00 to 12
+		tmpHours = 12;
 	}
 	
-	numHours = convertInt(tmpHours);
-	numMinutes = convertInt(tmpMinutes);
+	// Now build the HH:MM APM string
+	
+	// first input the number of hours into the day
+	returnString << setfill('0') << setw(2) << tmpHours;
+	
+	// followed by the colon
+	returnString << ":";
+	
+	// then input the number of minutes into an hour
+	returnString << setfill('0') << setw(2) << tmpMinutes;
+	
+	// Finally add a space and wether it is am or pm.
+	returnString << " " << apm;
+	
+	/*
+	// Test for the minToHour Funciton
+	for(int i=0; i<1440; i += 1){
+		cout << minToHour(i) << endl;
+	}
+	*/
 	
 	
-	string complete << numHours << ":" << numMinutes << " " << apm;
-	
-	return complete;
+	// Now, return a string with the contents of the stream
+	return returnString.str();
 }
 
 /**@fun convertInt(int number)
  *	^	Converts an integer into a number using standard libraries.
+ *
  * @param number | integer
  *	^	This is the number to be converted
  *
@@ -342,6 +474,9 @@ string minToHour(int minutes){
  *	S	http://goo.gl/wC32J
  * 
  * @reqs <sstream>
+ *
+ * @note NoremacSkich | 2014/4/15
+ *	^	This is depreciated, unless I find another use for it.
  *
  */
 string convertInt(int number)
@@ -354,16 +489,23 @@ string convertInt(int number)
 // ====== main driver ==============================
 int main(void)
 {
-	//TRAINS trainSched[100];
-	//STATIONS stations[100];
+	// Create the train Schedule array
+	TRAINS trainSched[100];
+	// Create the station list array
+	STATIONS stationlist[100];
 	
-	//getTrains(trainsFile,trainSched);
-	//getStations(stationsFile, stations);
+	// Populate the stations array
+	getStations(stationsFile, stationlist);
 	
-	for(int i=0; i<1440; i++)
-		minToHour(i);
-	}
+	// Populate the Train Schedule
+	getTrains(trainsFile, trainSched);
 	
+	// Show the stations
+	showStations(stationlist, 100);
+	
+	
+	
+	/*
 	if(false){
 	int main_choice;
 
@@ -418,6 +560,7 @@ int main(void)
 		}
 	}while(main_choice != 4);
 	}
+	*/
 	// Exit the program gracefully, without errors
 	return 0;
 }
