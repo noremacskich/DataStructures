@@ -131,14 +131,11 @@ string printSingleStation(STATIONS stationList[], int stationNumber);
  *
  * @author NoremacSkich | 2014/4/14
  *
- * @todo NoremacSkich | 2014/4/14
- *	^	Convert each line from the file into a data structure.
- *
  * @return 
  *	^	See the stations[] parameter.
  */
 void getStations(string filePath, STATIONS stationlist[]){
-		// create the file variable
+	// create the file variable
 	ifstream infile;
 	string line;
 	
@@ -167,6 +164,41 @@ void getStations(string filePath, STATIONS stationlist[]){
 	// Close the file
 	infile.close();
 }
+
+/**@fun printShortTime(string startStation, string endStation)
+ *	^	This prints out the shortest time screen
+ *	
+ * @author NoremacSkich | 2014/4/21
+ *
+ */
+void printShortTime(string startStation, string endStation){
+	
+	cout << "REPORT 1: Shortest time riding on Trains." << endl;
+	//cout << "To go from " << startStation << " to " << endStation << "you will need to ride on trains for " << endl;
+	//cout << numHours << " hours and " << numMinutes << " minutes." << endl;
+	
+	cout << "You will take the following trains:" << endl;
+	
+	// This is where the printRoute function will be called.
+	
+	
+	cout << "END OF REPORT" << endl;
+	
+}
+
+/**@fun printRoute()
+ *	^	This will print out the intermediate stations
+ *
+ * @author NoremacSkich | 2014/4/21
+ *
+ */
+void printRoute(){
+	
+	// The contents for this come from the P array
+	//cout << "Leave " << departureStation << " at " << departureTime << " and arrive at " << arrivalStation << " at " << arrivalTime << endl;
+
+}
+
 /**@fun showStations(STATIONS stations[])
  *	^	This will print out the stations and their ID to the consumer.
  * 
@@ -177,66 +209,49 @@ void getStations(string filePath, STATIONS stationlist[]){
  * @param numRows | Integer
  *	^	This is the number of rows that needs to be printed
  *
- * @param startRecord | Integer
+ * @param startRec | Integer
  *	^	This is record that the first column starts on.
  *
- * @reqs terminalHeight
- *	^	Tells me what the height of the terminal is.
- *
  * @author NoremacSkich | 2014/4/14
- *
+ * @modified NoremacSkich | 2014/4/17
+ * @modified NoremacSkich | 2014/4/21
+ * 
+ * @bugs NoremacSkich | 2014/4/17
+ *	1	an start record of zero crashes the program
+ *	2	the number of rows needs to be lower than half of the 
+ *		number of stations, otherwise program will crash
+ *	3	Negative numbers do nothing for the row count
+ *	4	Negative numbers for the startRec will crash the program.
  */
-void showStations(STATIONS stationList[], int numStations){
+void showStations(STATIONS stationList[], int numRows, int startRec){
 	// Things to know:
 	//		Number of rows to print out, this is the column height
 	//		The list of stations
 	//		The starting record
 	
-	// This is the number of columns that can be displayed at once
-	int pageColumnCount = 2;
-	
-	// The number of lines that are being used by other parts of the gui
-	int interfaceLines = 5;
-	
-	// This computes the number of items that can be in each list
-	int columnHeight = terminalHeight - interfaceLines;
-	
-	// This calculates the number of rows that will be on the last column.
-	int leftovers = numStations % columnHeight;
-	
-	// this calculates the number of columns that will be needed to be displayed
-	int columnCount = (numStations - leftovers) / columnHeight;
-	
-	// If there were leftovers, then we need to add an additional column
-	if(leftovers > 0){
-		// Then add one more column
-		columnCount++;
-	}
-	
-	int currentPage = 1;
-	// This is the starting record for the current page
-	int startRecord = currentPage * columnHeight * 2;
-	
 	// This is the current line.
 	int currentLine = 0;
 	
+	// This fixes the problem of records being off by 1, but not quite
+	// sure what is causing that in the first place.
+	startRec--;
+	
+	// Print out the header info quick and dirty
+	cout << "  ID  Name                        ID  Name                      " << endl;
+	cout << " ---  -------------------------- ---  --------------------------" << endl;
+	
 	//Print out lines until the page is done.
-	while(currentLine <= columnHeight){
+	while(currentLine <= numRows){
 		// Print out the station for the first column, then a space
-		cout << printSingleStation(stationList, (currentLine)) << " ";
+		cout << printSingleStation(stationList, (currentLine + startRec)) << " ";
 		// Next print out the 2nd column by adding together the current line
 		// that is currently being displayed, and the number of rows in a column
 		// (columnHeight) and add one.
-		cout << printSingleStation(stationList, (columnHeight + currentLine + 1)) << endl;
+		cout << printSingleStation(stationList, (numRows + currentLine + startRec + 1)) << endl;
 		// Increment to the next line.
 		currentLine++;
 	}
-	
-	
-	// For now print out the stations one by one
-	for(int i=0; i<numStations; i++){
-		
-	}
+
 
 }
 /**@fun printSingleStation(STATIONS stationList[], int stationNumber)
@@ -250,6 +265,9 @@ void showStations(STATIONS stationList[], int numStations){
  * @note NoremacSkich | 2014/4/17
  *	^	This will output: ###. XXXXX
  *		There is no new line character.
+ *
+ * @todo NoremacSkich | 2014/4/17
+ *	^	This should output nothing when a record doesn't exist
  */
 string printSingleStation(STATIONS stationList[], int stationNumber){
 	stringstream stationColumns;
@@ -339,6 +357,26 @@ void getTrains(string filePath, TRAINS trainSched[]){
  *
  */
 void showTrainSched(STATIONS stations[]){
+	
+	// Place to store the starting Station
+	int startStation = 0;
+	int endStation = 0;
+	
+	// Show the options
+	showStations(stations, 49, 1);
+	
+	// Ask for Starting station
+	cout << "What station do you want to start at?" << endl;
+	cin >> startStation;
+	
+	cout << "Where do you wish to go?" << endl;
+	cin >> endStation;
+	
+	// Calculate the route
+	
+	// clear the screen
+	
+	// Print out the Report
 	
 }
 
@@ -497,11 +535,7 @@ int main(void)
 	// Populate the stations array
 	getStations(stationsFile, stationlist);
 	
-	// Populate the Train Schedule
-	getTrains(trainsFile, trainSched);
-	
-	// Show the stations
-	showStations(stationlist, 100);
+	showTrainSched(stationlist);
 	
 	
 	

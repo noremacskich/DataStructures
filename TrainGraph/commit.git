@@ -1,25 +1,24 @@
-Minutes, Array Storage, and Show Stations update
+New Screen and showStations update
 
 Modified:
-1	void showStations(STATIONS stations[])
-2	string minToHour(int minutes)
-3	void getStations(string filePath, STATIONS stationlist[])
-4	void getTrains(string filePath, TRAINS trainSched[])
+1	void showStations(STATIONS stationList[], int numStations) ->
+		void showStations(STATIONS stationList[], int numRows, int startRec)
+2	void showTrainSched(STATIONS stations[])
 
 Reasons:
-1	This will now print out this layout: 
-	###. &&&&&&&&&&&&&&&&&&&&&&&&& ###. &&&&&&&&&&&&&&&&&&&&&&&&&
-	Some left over code from another idea, clean up later.
-2	This is my second approach to the function
-3	Got the input stored in the stationArray array
-4	Got the input stored in the trainArray array
-
-Notes:
-1	keeping around the string convertInt(int number) function number just in case
-	I will need it later.
+1	This will print out a two columns worth of records.  Updated the 
+	documentation. noted the bugs
+2	This will print out the stations, then ask for a starting location and
+	an ending location
 	
-Created:
-1	printSingleStation(STATION stationList[], int stationNumber)
+Added:
+1	void printShortTime(string startStation, string endStation)
+2	void printRoute()
 
 Reasons:
-1	This prints the station info like this: " ###. XXXXXXX"
+1	This will print out the report
+2	This will print out all the stations
+
+Finished:
+1	Convert each line from the file into a data structure
+
