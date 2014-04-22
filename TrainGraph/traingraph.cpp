@@ -26,6 +26,7 @@ string trainsFile = "trains.dat";
 
 const int terminalWidth = 80;
 const int terminalHeight = 20;
+int numStations = 0;
 
 // GLOBAL TYPE DEF  =====================================
 
@@ -72,8 +73,13 @@ struct STATIONS{
  *	^	The train will arrive at this station.
  *	N	There are at most 100 stations.
  *
+ * @param Travel_Time | int
+ *	^	This is how long the train ride is.
+ *	N	This is calculated by subtracting departure time from arrival time.
+ *
  * @author NoremacSkich | 2014/4/14
- * 
+ * @modified NoremacSkich | 2014/4/22
+ *
  */
 
 struct TRAINS{
@@ -81,6 +87,7 @@ struct TRAINS{
 	int Arrival_Station;
 	int Departure_Time;
 	int Arrival_Time;
+	int Travel_Time;
 };
 
 
@@ -89,20 +96,24 @@ struct TRAINS{
 // ================= PROTOTYPES FOR STATIONS ========================
 // this will print out all the stations.
 void showStations(STATIONS stations[]);
+
 // This will get the stations from file and return them to the stations array
 void getStations(string filePath, STATIONS stations[]);
 
 // ================= PROTOTYPES FOR TRAINS ========================
 // This will print out all the id's and names for the train station
 void showTrainSched(STATIONS stations[]);
+
 // This will get the trains from file and return them to the trainSched array
 void getTrains(string filePath, TRAINS trainSched[]);
 
 // ================= PROTOTYPES FOR MISC ========================
 // This shows the primary menu.
 void showMainMenu(void);
+
 // program main driver
 int main(void); 
+
 // This is a routine to print a prompt and get a user input.  This is so that 
 // when something is sent to the screen, it can be seen before the screen is 
 // cleared.
@@ -117,6 +128,97 @@ string convertInt(int number);
 // This prints out the 2 column station info
 string printSingleStation(STATIONS stationList[], int stationNumber);
 //=========================== FUNCTIONS ===========================
+
+/**@fun shortest(TRAINS a, TRAINS c, TRIANS p)
+ *	^	This calculates the shortest path between two stations based on the 
+ *		path of the trains
+ *	I	This is based on Floyd's Algorithm
+ *
+ * @param a | TRAINS
+ *	^	???
+ *
+ * @param c | TRAINS
+ *	^	???
+ *
+ * @param p | TRAINS
+ *	^	This holds all the stations between the two stations
+ *
+ * @author NoremacSkich | 2014/4/21
+ *
+ */
+/*
+ void shortest(TRAINS a, TRAINS c, TRAINS p){
+	
+	int i;
+	int j;
+	int k;
+	int infinity = 500;
+	
+	// Copy a into c
+	for(i=0; i<infinity; i++){
+		for(j=0; j<infinity; i++){
+			a[i,j].Travel_Time = c[i,j].Travel_Time;
+			p[i,j].Travel_Time = 0; // set p to zero
+		}
+	}
+	
+	// Set distance to self as 0
+	for(i=0; i<infinity; i++){
+		a[i,i].Travel_Time = 0;
+	}
+	
+	// Compute the shortest paths
+	for(k=0; k<infinity; k++){
+		for(i=0; i<infinity; i++){
+			for(j=0; j<infinity; j++){
+				if(a[i,k].Travel_Time + a[k,j].Travel_Time < a[i,j].Travel_Time){
+					a[i,j].Travel_Time = a[i, k].Travel_Time + a[k,j].Travel_Time;
+					p[i,j].Travel_Time = k; // record the middle path
+				}
+			}
+		}
+	}
+	
+	
+}
+*/
+/**@fun path(int i, int j, TRAINS p)
+ *	^	This will get the stations between the two given stations
+ *
+ * @param i | integer
+ *	^	???
+ *
+ * @param j | integer
+ *	^	???
+ *
+ * @param p | TRAINS | Array
+ *	^	
+ * @author NoremacSkich | 2014/4/21
+ *
+ */
+/*
+void path(int i, int j, TRAINS p){
+	int k;
+	// Set k to the midpoint of i -> j
+	k = p[i, j];
+	
+	// Grounding Condition
+	if(k==0){
+		
+		// This is a direct path, exit the function
+		return;
+	}
+	
+	// Get the midpoint between i -> k
+	path(i,k);
+	
+	// process the midpoint
+	cout << k;
+	
+	// get the midpoint between k -> j
+	path(k,j);
+}
+*/
 // ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
  *	^	This will open up the inputed file, and return an array of stations.
@@ -138,14 +240,14 @@ void getStations(string filePath, STATIONS stationlist[]){
 	// create the file variable
 	ifstream infile;
 	string line;
-	
+	int debug = false;
 	// Open the file to read the schedule contents
 	infile.open("stations.dat");
 	
 	int i=0;
 	
 	// While there is a line to get, and there fewer than 100 records
-	while(!infile.eof() && i < 100){
+	while(!infile.eof()){
 		
 		// Store the Number
 		infile >> stationlist[i].Number;
@@ -155,12 +257,17 @@ void getStations(string filePath, STATIONS stationlist[]){
 		
 		// This removes the first character in the string
 		// from http://goo.gl/4dg3Lh
-		stationlist[i].Name = stationlist[i].Name.substr(1).append(stationlist[i].Name.substr(0,1));
+		//stationlist[i].Name = stationlist[i].Name.substr(1).append(stationlist[i].Name.substr(0,1));
 		
 		// Goto next spot in the array.
 		i++;
 	}
+	i--;
+	numStations = i;
 	
+	if(debug){
+		cout << "Number of records read in: " << i << endl;
+	}
 	// Close the file
 	infile.close();
 }
@@ -242,12 +349,15 @@ void showStations(STATIONS stationList[], int numRows, int startRec){
 	
 	//Print out lines until the page is done.
 	while(currentLine <= numRows){
+		
 		// Print out the station for the first column, then a space
 		cout << printSingleStation(stationList, (currentLine + startRec)) << " ";
+		
 		// Next print out the 2nd column by adding together the current line
 		// that is currently being displayed, and the number of rows in a column
 		// (columnHeight) and add one.
 		cout << printSingleStation(stationList, (numRows + currentLine + startRec + 1)) << endl;
+		
 		// Increment to the next line.
 		currentLine++;
 	}
@@ -270,9 +380,22 @@ void showStations(STATIONS stationList[], int numRows, int startRec){
  *	^	This should output nothing when a record doesn't exist
  */
 string printSingleStation(STATIONS stationList[], int stationNumber){
+	
+	// Create a string
 	stringstream stationColumns;
-	stationColumns << " " << right << setw(3) << stationList[stationNumber].Number << ". ";
-	stationColumns << left << setw(25) << stationList[stationNumber].Name;
+	
+	if( stationNumber < numStations ){ 
+		
+		// Print out the station number
+		stationColumns << " " << right << setw(3) << stationList[stationNumber].Number << ". ";
+		
+		// Print out the station name
+		stationColumns << left << setw(25) << stationList[stationNumber].Name;
+		
+	}else{
+		// Print out  a blank line
+		stationColumns << setw(31) << " ";
+	}	
 	/*
 	// Test the single station list input
 	for(int i=0; i<100; i++){
@@ -328,10 +451,19 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		infile >> trainSched[i].Departure_Time;
 		infile >> trainSched[i].Arrival_Time;
 		
+		// Set the travel time.
+		trainSched[i].Travel_Time = trainSched[i].Arrival_Time - trainSched[i].Departure_Time;
 		// Goto next spot in the array.
 		i++;
 	}
 	
+	while(i<=100){
+		trainSched[i].Departure_Station = -1;
+		trainSched[i].Arrival_Station = -1;
+		trainSched[i].Departure_Time = -1;
+		trainSched[i].Arrival_Time = -1;
+		trainSched[i].Travel_Time = -1;
+	}
 	/*
 	// See if print out the train data
 	for(int i=0; i<100; i++){
@@ -535,8 +667,8 @@ int main(void)
 	// Populate the stations array
 	getStations(stationsFile, stationlist);
 	
-	showTrainSched(stationlist);
 	
+	showStations(stationlist, 5, 1);
 	
 	
 	/*
@@ -569,7 +701,7 @@ int main(void)
 			
 			
 			case 1: 
-				cout << "List of Stations" << endl;
+				showStations(stations, 49, 1);
 				myPause();
 				break; // To the main menu
 				
