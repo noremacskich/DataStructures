@@ -93,6 +93,8 @@ struct TRAINS{
 	int Departure_Time;
 	int Arrival_Time;
 	int Travel_Time;
+	string DT_String;
+	string AT_String;
 };
 
 
@@ -129,7 +131,8 @@ void showMainMenu(void);
 
 // program main driver
 int main(void); 
-
+// converts teh minutes into a string like: 08:00 AM
+string minToHour(int minutes);
 // This is a routine to print a prompt and get a user input.  This is so that 
 // when something is sent to the screen, it can be seen before the screen is 
 // cleared.
@@ -141,7 +144,8 @@ void clearScreen(void);
 // converts an integer into a string
 string convertInt(int number);
 
-
+// print out the train info
+void printTrainInfo(TRAINS trainSched[], int trainID);
 //=========================== FUNCTIONS ===========================
 
 /**@fun shortest(TRAINS a, TRAINS c, TRIANS p)
@@ -324,10 +328,10 @@ void printShortTime(string startStation, string endStation){
  * @author NoremacSkich | 2014/4/21
  *
  */
-void printRoute(){
+void printRoute(TRAINS trainInfo){
 	
 	// The contents for this come from the P array
-	//cout << "Leave " << departureStation << " at " << departureTime << " and arrive at " << arrivalStation << " at " << arrivalTime << endl;
+	//cout << trainInfo.routeString << endl;
 
 }
 
@@ -459,6 +463,8 @@ void getTrains(string filePath, TRAINS trainSched[]){
 	ifstream infile;
 	string line;
 	
+
+	
 	// Open the file to read the schedule contents
 	infile.open("trains.dat");
 	
@@ -471,7 +477,9 @@ void getTrains(string filePath, TRAINS trainSched[]){
 	int i=0;
 	
 	// While there is a line to get, and there fewer than 100 records
-	while(!infile.eof() && i < 100){
+	while(!infile.eof()){
+		// for some reason, not stopping at last line, reads in a blank record,
+		// then stops.
 		// Store the train info
 		infile >> trainSched[i].Departure_Station;
 		infile >> trainSched[i].Arrival_Station;
@@ -480,17 +488,17 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		
 		// Set the travel time.
 		trainSched[i].Travel_Time = trainSched[i].Arrival_Time - trainSched[i].Departure_Time;
+		trainSched[i].DT_String = minToHour(trainSched[i].Departure_Time);
+		trainSched[i].AT_String = minToHour(trainSched[i].Arrival_Time);
+		
+		// Show the train info
+		printTrainInfo(trainSched, i);
+		
 		// Goto next spot in the array.
 		i++;
 	}
 	
-	while(i<=100){
-		trainSched[i].Departure_Station = -1;
-		trainSched[i].Arrival_Station = -1;
-		trainSched[i].Departure_Time = -1;
-		trainSched[i].Arrival_Time = -1;
-		trainSched[i].Travel_Time = -1;
-	}
+
 	/*
 	// See if print out the train data
 	for(int i=0; i<100; i++){
@@ -503,6 +511,23 @@ void getTrains(string filePath, TRAINS trainSched[]){
 	
 	// Close the file
 	infile.close();
+}
+
+void printTrainInfo(TRAINS trainSched[], int trainID){
+	// being lazy
+	int i = trainID;
+	
+	cout << "DS: \"" << trainSched[i].Departure_Station << "\"" << endl;
+	cout << "AS: \"" << trainSched[i].Arrival_Station << "\"" << endl;
+	cout << "DT: \"" << trainSched[i].Departure_Time << "\"" << endl;
+	cout << "AT: \"" << trainSched[i].Arrival_Time << "\"" << endl;
+	
+	// Set the travel time.
+	cout << "Travel_Time: \"" << trainSched[i].Travel_Time << "\"" << endl;
+	cout << "DT_String: \"" << trainSched[i].DT_String << "\"" << endl;
+	cout << "AT_String: \"" << trainSched[i].AT_String << "\"" << endl;
+	cout << "-------------------" << endl;
+	
 }
 
 /**@fun showTrainSched(TRAINS trainSched[])
@@ -686,15 +711,32 @@ string convertInt(int number)
 // ====== main driver ==============================
 int main(void)
 {
+	
+	
 	// Create the train Schedule array
 	TRAINS trainSched[100];
+	// Sanitize / initialize the Array
+	for(int i = 0; i<100; i++){
+		trainSched[i].Departure_Station = -1;
+		trainSched[i].Arrival_Station = -1;
+		trainSched[i].Departure_Time = -1;
+		trainSched[i].Arrival_Time = -1;
+		trainSched[i].Travel_Time = -1;
+		trainSched[i].DT_String = "-";
+		trainSched[i].AT_String = "-";
+	}
 	// Create the station list array
 	string stationlist[100];
 	
+	cout << "getStations" << endl;
 	// Populate the stations array
 	getStations(stationsFile, stationlist);
 	
+	cout << "getTrains" << endl;
+	// Populate the train array
+	getTrains(trainsFile, trainSched);
 	
+	cout << "Show Stations" << endl;
 	showStations(stationlist, 5, 1);
 	
 	

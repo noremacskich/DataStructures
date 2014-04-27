@@ -1,3 +1,16 @@
+Getting and printing the trains
 
+modified:
+1	printroute()
+2	getTrains
 
-change station list into an array of strings, with index value being the station number.
+Reasons:
+1	this should print out 
+2	This now works, except it reads in a blank line . . .
+
+created:
+1	void printTrainInfo(TRAINS trainSched[], int trainID)
+
+Reasons:
+1	to print out the train info
+
