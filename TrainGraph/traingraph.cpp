@@ -101,27 +101,27 @@ struct TRAINS{
 // ================= PROTOTYPES FOR STATIONS ========================
 
 // this will print out all the stations.
-void showStations(STATIONS stations[]);
+void showStations(string stations[]);
 
 // This will get the stations from file and return them to the stations array
-void getStations(string filePath, STATIONS stations[]);
+void getStations(string filePath, string stations[]);
 
 // ================= PROTOTYPES FOR TRAINS ========================
 
 // This will print out all the id's and names for the train station
-void showTrainSched(STATIONS stations[]);
+void showTrainSched(string stations[]);
 
 // This will get the trains from file and return them to the trainSched array
 void getTrains(string filePath, TRAINS trainSched[]);
 
 // This prints out the 2 column station info
-string printSingleStation(STATIONS stationList[], int stationNumber);
+string printSingleStation(string stationList[], int stationNumber);
 
 // ================= PROTOTYPES FOR FLOYD'S ALGORITHM ========================
 
-void shortest(TRAINS a, TRAINS c, TRAINS p)
+void shortest(TRAINS a, TRAINS c, TRAINS p);
  
-void path(int i, int j, TRAINS p)
+void path(int i, int j, TRAINS p);
 // ================= PROTOTYPES FOR MISC ========================
 
 // This shows the primary menu.
@@ -197,10 +197,10 @@ string convertInt(int number);
 */	
 }
 void fillMatrix(STATIONS stationList[], TRAINS trainList[]){
-	MATRIX floyds[numStations, numStations];
+	//MATRIX floyds[numStations, numStations];
 	
-	floyds[train.departureStation, train.arrivalStation].infinity = false;
-	floyds[train.departureStation, train.arrivalStation].cost = #;
+	//floyds[train.departureStation, train.arrivalStation].infinity = false;
+	//floyds[train.departureStation, train.arrivalStation].cost = #;
 	
 }
 /**@fun path(int i, int j, TRAINS p)
@@ -254,28 +254,31 @@ void path(int i, int j, TRAINS p){
  *	^	This is the array that the station data will be returned in.
  *
  * @author NoremacSkich | 2014/4/14
+ * @modified NoremacSkich | 2014/4/27
  *
  * @return 
  *	^	See the stations[] parameter.
  */
-void getStations(string filePath, STATIONS stationlist[]){
+void getStations(string filePath, string stationlist[]){
+	// using array of strings for stations
 	// create the file variable
 	ifstream infile;
 	string line;
 	int debug = false;
 	// Open the file to read the schedule contents
 	infile.open("stations.dat");
-	
+	// this gets rid of the number
+	int number;
 	int i=0;
 	
 	// While there is a line to get, and there fewer than 100 records
 	while(!infile.eof()){
 		
 		// Store the Number
-		infile >> stationlist[i].Number;
+		infile >> number;
 		
 		// Store the Name
-		getline(infile, stationlist[i].Name);
+		getline(infile, stationlist[i]);
 		
 		// This removes the first character in the string
 		// from http://goo.gl/4dg3Lh
@@ -352,7 +355,7 @@ void printRoute(){
  *	3	Negative numbers do nothing for the row count
  *	4	Negative numbers for the startRec will crash the program.
  */
-void showStations(STATIONS stationList[], int numRows, int startRec){
+void showStations(string stationList[], int numRows, int startRec){
 	// Things to know:
 	//		Number of rows to print out, this is the column height
 	//		The list of stations
@@ -405,7 +408,7 @@ void showStations(STATIONS stationList[], int numRows, int startRec){
  * @author NoremacSkich | 2014/4/22
  *
  */
-string printSingleStation(STATIONS stationList[], int stationNumber){
+string printSingleStation(string stationList[], int stationNumber){
 	
 	// Create a string
 	stringstream stationColumns;
@@ -413,10 +416,10 @@ string printSingleStation(STATIONS stationList[], int stationNumber){
 	if( stationNumber < numStations ){ 
 		
 		// Print out the station number
-		stationColumns << " " << right << setw(3) << stationList[stationNumber].Number << ". ";
+		stationColumns << " " << right << setw(3) << stationNumber << ". ";
 		
 		// Print out the station name
-		stationColumns << left << setw(25) << stationList[stationNumber].Name;
+		stationColumns << left << setw(25) << stationList[stationNumber];
 		
 	}else{
 		// Print out  a blank line
@@ -512,7 +515,7 @@ void getTrains(string filePath, TRAINS trainSched[]){
  * @author NoremacSkich | 2014/4/14
  *
  */
-void showTrainSched(STATIONS stations[]){
+void showTrainSched(string stations[]){
 	
 	// Place to store the starting Station
 	int startStation = 0;
@@ -686,7 +689,7 @@ int main(void)
 	// Create the train Schedule array
 	TRAINS trainSched[100];
 	// Create the station list array
-	STATIONS stationlist[100];
+	string stationlist[100];
 	
 	// Populate the stations array
 	getStations(stationsFile, stationlist);
