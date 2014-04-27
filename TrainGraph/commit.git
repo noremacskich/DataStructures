@@ -1,37 +1,20 @@
-Floyd, Trains and Stations, and Blank Line
-
-Added:
-1	void shortest(TRAINS a, TRAINS c, TRIANS p)
-2	void path(int i, int k)
-
-Reasons:
-1	This will sort the station matrix.
-2	This will grab the stations that are between the two given stations.
+Minor Updates before Branch
 
 Modified:
-1	string printSingleStation(STATIONS stationList[], int stationNumber)
-2	void getStations(string filePath, STATIONS stationlist[])
-3	struct TRAINS
-4	void getTrains(string filePath, TRAINS trainSched[])
-
-Reason:
-1	This should now print out a blank line if there is no station.
-2	This now has a debug statement stating how many records it read in.  Also
-	it now stores the number of records read in into the numStations global 
-	variable.
-3	Added the travel time between stations.
-4	Added the logic for the Travel Time Attribute.  Also added a clause for 
-	filling in blank trains.
-
-Completed:
-1	printSingleStation (1)
+1	void getTrains(string filePath, TRAINS trainSched[])
+2	string printSingleStation(STATIONS stationList[], int stationNumber)
 
 Reasons:
-1	now the print stations function can print out blank spots.  Had to modify
-	the get stations function to get the total number of records read in.
+1	forgot to add modified statement, and removed the todo statement.
+2	Added author statement, removed the todo statement, updated description 
+	and notes
+
+Completed:
+1	getTrains (1)
+
+Reasons:
+1	The data is being transfered to the array, it's been like this for a while,
+	didn't note it though :(
 	
-Notes
-1	This will always create 100 train records
-2	The shortest and path functions need to be modified to fit with our data,
-	For now, this will be commented out, until I figure out what needs to be
-	done.
+Other:
+1	Added a global numTrains variable

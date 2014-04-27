@@ -26,7 +26,12 @@ string trainsFile = "trains.dat";
 
 const int terminalWidth = 80;
 const int terminalHeight = 20;
+
+// Store the number of stations
 int numStations = 0;
+
+// Store the number of trains
+int numTrains = 0;
 
 // GLOBAL TYPE DEF  =====================================
 
@@ -94,6 +99,7 @@ struct TRAINS{
 // ================= PROTOTYPES ========================
 
 // ================= PROTOTYPES FOR STATIONS ========================
+
 // this will print out all the stations.
 void showStations(STATIONS stations[]);
 
@@ -101,13 +107,23 @@ void showStations(STATIONS stations[]);
 void getStations(string filePath, STATIONS stations[]);
 
 // ================= PROTOTYPES FOR TRAINS ========================
+
 // This will print out all the id's and names for the train station
 void showTrainSched(STATIONS stations[]);
 
 // This will get the trains from file and return them to the trainSched array
 void getTrains(string filePath, TRAINS trainSched[]);
 
+// This prints out the 2 column station info
+string printSingleStation(STATIONS stationList[], int stationNumber);
+
+// ================= PROTOTYPES FOR FLOYD'S ALGORITHM ========================
+
+void shortest(TRAINS a, TRAINS c, TRAINS p)
+ 
+void path(int i, int j, TRAINS p)
 // ================= PROTOTYPES FOR MISC ========================
+
 // This shows the primary menu.
 void showMainMenu(void);
 
@@ -125,8 +141,7 @@ void clearScreen(void);
 // converts an integer into a string
 string convertInt(int number);
 
-// This prints out the 2 column station info
-string printSingleStation(STATIONS stationList[], int stationNumber);
+
 //=========================== FUNCTIONS ===========================
 
 /**@fun shortest(TRAINS a, TRAINS c, TRIANS p)
@@ -135,20 +150,20 @@ string printSingleStation(STATIONS stationList[], int stationNumber);
  *	I	This is based on Floyd's Algorithm
  *
  * @param a | TRAINS
- *	^	???
+ *	^	The Adjacency Matrix
  *
  * @param c | TRAINS
- *	^	???
+ *	^	The Adjacency Matrix of shortest paths
  *
  * @param p | TRAINS
  *	^	This holds all the stations between the two stations
  *
  * @author NoremacSkich | 2014/4/21
- *
+ * @modified NoremacSkich | 2014/4/25
  */
-/*
+
  void shortest(TRAINS a, TRAINS c, TRAINS p){
-	
+/*	
 	int i;
 	int j;
 	int k;
@@ -179,9 +194,15 @@ string printSingleStation(STATIONS stationList[], int stationNumber);
 		}
 	}
 	
+*/	
+}
+void fillMatrix(STATIONS stationList[], TRAINS trainList[]){
+	MATRIX floyds[numStations, numStations];
+	
+	floyds[train.departureStation, train.arrivalStation].infinity = false;
+	floyds[train.departureStation, train.arrivalStation].cost = #;
 	
 }
-*/
 /**@fun path(int i, int j, TRAINS p)
  *	^	This will get the stations between the two given stations
  *
@@ -196,9 +217,9 @@ string printSingleStation(STATIONS stationList[], int stationNumber);
  * @author NoremacSkich | 2014/4/21
  *
  */
-/*
+
 void path(int i, int j, TRAINS p){
-	int k;
+/*	int k;
 	// Set k to the midpoint of i -> j
 	k = p[i, j];
 	
@@ -217,8 +238,9 @@ void path(int i, int j, TRAINS p){
 	
 	// get the midpoint between k -> j
 	path(k,j);
-}
 */
+}
+
 // ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
  *	^	This will open up the inputed file, and return an array of stations.
@@ -365,19 +387,23 @@ void showStations(STATIONS stationList[], int numRows, int startRec){
 
 }
 /**@fun printSingleStation(STATIONS stationList[], int stationNumber)
- *	^	This will print out the station number and name
+ *	^	This will print out the station number and name.  If there isn't a
+ *		a station associated with the stationNumber, then it will return 32
+ *		space characters.
  *
  * @param stationList[] | STATIONS
  *	^	This is the list of stations
  *
  * @param stationNumber | Integer
  *	^	This is the station ID that this function will print.
+ * 
  * @note NoremacSkich | 2014/4/17
  *	^	This will output: ###. XXXXX
- *		There is no new line character.
+ *	^	There is no new line character.
+ *	^	This will print out 32 spaces if the station doesn't exist
  *
- * @todo NoremacSkich | 2014/4/17
- *	^	This should output nothing when a record doesn't exist
+ * @author NoremacSkich | 2014/4/22
+ *
  */
 string printSingleStation(STATIONS stationList[], int stationNumber){
 	
@@ -419,9 +445,7 @@ string printSingleStation(STATIONS stationList[], int stationNumber){
  *	^	This is the array that the train schedule data will be returned in.
  *
  * @author NoremacSkich | 2014/4/14
- *
- * @todo NoremacSkich | 2014/4/14
- *	^	Convert each line from the file into a data structure.
+ * @modified NoremacSkich | 2014/4/22
  *
  * @return 
  *	^	See the trainSched[] parameter.
