@@ -5,7 +5,12 @@ using namespace std;
 
 static int numStations = 4;
 
-void printStationList(int stations[4]);
+void printVerticesList(string verticesList[100]);
+void pathToTable(string verticesList[100], string trainpath);
+void printArray(int myarray[4][4]);
+void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf);
+string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
+void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
 
 void printArray(int myarray[4][4]){
 	
@@ -47,7 +52,6 @@ void printArray(int myarray[4][4]){
  */
 void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf){
 
-	
 	// Copy adjacency matrix into the shortest path matrix
 	for(int i=0; i<numVertexes; i++){
 		for(int j=0; j<numVertexes; j++){
@@ -99,20 +103,16 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
  * @author NoremacSkich | 2014/4/21
  * @modified NoremacSkich | 2014/4/28
  *
+ * @reverted NoremacSkich | 3 commits ago
+ *
  */
 
-void path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stations[4], int stationsI ){
+string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
+ 	stringstream returnString;	// This will hold the HH:MM APM string
  	
- 	cout << endl << "In Path, stationsI = " << stationsI << endl;
- 	printStationList(stations);
- 		
-		// Increment the station counter
-	stationsI++;
-	
  	// Check if path exists, and if there is a mid path
 	if(shortMatrix[i][j] != 50 && middleMatrix[i][j] !=-1){
-		
-		
+
 		// This is the middle point
 		int k;
 		// Set k to the midpoint of i -> j
@@ -122,19 +122,21 @@ void path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stati
 		if(k==-1){
 			
 			// This is a direct path, exit the function
-			return ;
+			return "";
 		}
 	
 		// Get the midpoint between i -> k
-		path(shortMatrix, middleMatrix, i,k, stations, stationsI);
-
-		// Store the midpoint
-		stations[stationsI] = k;
+		returnString << path(shortMatrix, middleMatrix, i,k);
+		
+		// process the midpoint
+		returnString << k << " ";
 		
 		// get the midpoint between k -> j
-		path(shortMatrix, middleMatrix, k,j, stations, stationsI);
+		returnString << path(shortMatrix, middleMatrix, k,j);
+		
+		return returnString.str();
 	}
-
+	return "";
  }
  
 /**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stations[4])
@@ -146,21 +148,22 @@ void path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stati
  * @param middleMatrix[4][4] | integer | array
  *	^	This is the matrix containing the next train to board
  * 
- * @param i | integer
+ * @param start | integer
  *	^	This is the starting station
  * 
- * @param j | integer
+ * @param end | integer
  *	^	This is the ending station
  * 
- * @param stations[4] | integer | Array
+ * @param verticesList[4] | integer | Array
  *	^	This is the array that contains the complete path from station (i) to 
  *		station (j)
  *	N	This should be returned modified.
- *	N	This should probably be a linked list, but for now will use array
+ *	N	This should probably be a linked list, but for now will use a string
  *
  * @author NoremacSkich | 2014/4/28
  */
-void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, int stations[4]){
+void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]){
+	stringstream returnString;	// This will hold the HH:MM APM string
 	
 	// Check to make sure stations exist
 	if(start > numStations){
@@ -189,27 +192,42 @@ void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int 
 	int stationI = 0;
 	
 	// Set the first element in the array, in this case, the first station
-	stations[stationI] = start;
+	returnString << start << ",";
 	
-	// increment the station counter
-	stationI++;
-	
-	// Print out the station list.
-	printStationList(stations);
-	
-	// Then find all the middle stations, and put them into the array
-	path( shortMatrix, middleMatrix, start, end, stations, stationI);
+	// Then find all the middle stations, and put them into the string
+	returnString << path( shortMatrix, middleMatrix, start, end);
 	
 	// Finally put the last station in the array
-	stations[stationI] = end;
+	returnString << end;
+	
+	// create the table from the string
+	pathToTable(verticesList, returnString.str());
 	
 	// Print out the station list.
-	printStationList(stations);
+	printVerticesList(verticesList);
 }
+
+void pathToTable(string verticesList[100], string trainpath){
+	stringstream stream;
+	stream << trainpath;
+	for(int i=0;i<=100;i++){
+		// If there is no more numbers, break the loop early
+		if(stream.rdbuf()->in_avail() == 0){
+			break;
+		}
+		stream >> verticesList[i];
+	}
+}
+
 // Note: if the array spot was not used, then it will equal 101
-void printStationList(int stations[4]){
-	for(int i=0; i<4; i++){
-		cout << stations[i] << ",";
+void printVerticesList(string verticesList[100]){
+	for(int i=0; i<100; i++){
+		// Short Circuit the readout
+		if(verticesList[i] == "101"){
+			break;
+		}
+		// Print out the station ID
+		cout << verticesList[i] << ",";
 	}
 	cout << endl;
 }
@@ -258,24 +276,21 @@ int main(void)
 	
 	//do{
 		// Initialize the starting list
-		int stationList[4] = {101};
-		for(int i=0; i<=4; i++){
-			stationList[i] = 101;
+		string verticesList[100];
+		for(int i=0; i<100; i++){
+			verticesList[i] = "101";
 		}
 		// Ask for the starting and stopping stations
 		cout << "Start: ";
 		cin >> start;
 		cout << " End: ";
 		cin >> end;
-		
-		// Print out the station list.
-		printStationList(stationList);
-		
+				
 		// Get the complete path between stations
-		completePath( shortMatrix, middleMatrix, start, end, stationList);
+		completePath( shortMatrix, middleMatrix, start, end, verticesList);
 		
 		// Print out the station list.
-		printStationList(stationList);
+		printVerticesList(verticesList);
 		cout << endl << endl;
 		
 		printArray(adjMatrix);
