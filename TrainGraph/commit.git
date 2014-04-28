@@ -1,15 +1,7 @@
-Got matrix setup, now start modifying floyd's functions
-
-Modified:
-1	fillMatrix
-2	getTrains(string filePath, TRAINS trainSched[])
-3	getStations(string filePath, string stationlist[])
-Reasons:
-1	This will now populate the adjacency matrix.
-2-3	Fixed the end of line problem
-
+Printing Matrix Array Modification . . . Done
 Created:
-1	void initMatrix(TRAINS matrix[100][100])
+1	void printArray(int myarray[4][4])
 
 Reasons:
-1	This will initialize the matrix to default values.
+1	Forgot to copy this over along with the other floyd's algorithm functions,
+	then modified it to print out the matrix table.

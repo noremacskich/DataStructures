@@ -104,7 +104,7 @@ struct TRAINS{
 // ================= Floyd's Prototypes ================
 void printVerticesList(string verticesList[100]);
 void pathToTable(string verticesList[100], string trainpath);
-void printArray(int myarray[4][4]);
+void printArray(int myarray[100][100]);
 void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf);
 string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
 void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
@@ -361,6 +361,28 @@ void printVerticesList(string verticesList[100]){
 	cout << endl;
 }
 
+void printArray(TRAINS myarray[100][100]){
+	
+	// need space for row headings
+	cout << " ";
+	// print out the numbers for the stations
+	for(int i=0; i<numTrains; i++){
+		cout << setw(6) << i;
+	}
+	
+	// Move to next line
+	cout << endl;
+	
+	for(int i=0; i<numTrains; i++){
+		cout << i << " ";
+		for(int j=0; j<numTrains; j++){
+			cout << setw(5) << myarray[i][j].Travel_Time << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
+
 // ================= STATIONS ========================
 /**@fun getStations(string filePath, STATIONS stations[])
  *	^	This will open up the inputed file, and return an array of stations.
@@ -393,7 +415,7 @@ void getStations(string filePath, string stationlist[]){
 	int i=0;
 	
 	// While there is a line to get, and there fewer than 100 records
-	while(infile >> number;){
+	while(infile >> number){
 		
 		// Store the Number
 		
@@ -624,7 +646,8 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		// Goto next spot in the array.
 		i++;
 	}
-	
+	// Set the number of trains you read in, used for floyds algorithm
+	numTrains = i;
 
 	/*
 	// See if print out the train data
@@ -906,6 +929,9 @@ int main(void)
 	cout << "get trains end" << endl;
 	// Populate the adjacency matrix of know values
 	fillMatrix(trainSched, adjMatrix);
+	
+	// print out the adjancy matrix
+	printArray(adjMatrix);
 	
 	cout << "Show Stations" << endl;
 	showStations(stationList, 5, 1);
