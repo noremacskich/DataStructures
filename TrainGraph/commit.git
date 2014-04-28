@@ -1,11 +1,15 @@
-Moving Over . . . Success
-
-Managed to move the functions over, and there seems to be no problem.
+Got matrix setup, now start modifying floyd's functions
 
 Modified:
-1	test.cpp
-2	traingraph.cpp
+1	fillMatrix
+2	getTrains(string filePath, TRAINS trainSched[])
+3	getStations(string filePath, string stationlist[])
+Reasons:
+1	This will now populate the adjacency matrix.
+2-3	Fixed the end of line problem
+
+Created:
+1	void initMatrix(TRAINS matrix[100][100])
 
 Reasons:
-1	updated a few documentation errors
-2	Moved over the floyd's algorithm functions
+1	This will initialize the matrix to default values.

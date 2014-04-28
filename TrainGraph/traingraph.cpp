@@ -213,13 +213,7 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
 		}
 	}
 }
-void fillMatrix(STATIONS stationList[], TRAINS trainList[]){
-	//MATRIX floyds[numStations, numStations];
-	
-	//floyds[train.departureStation, train.arrivalStation].infinity = false;
-	//floyds[train.departureStation, train.arrivalStation].cost = #;
-	
-}
+
 /**@fun path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
  *	^	This will get the stations between the two given stations
  *
@@ -380,7 +374,7 @@ void printVerticesList(string verticesList[100]){
  *	^	This is the array that the station data will be returned in.
  *
  * @author NoremacSkich | 2014/4/14
- * @modified NoremacSkich | 2014/4/27
+ * @modified NoremacSkich | 2014/4/28
  *
  * @return 
  *	^	See the stations[] parameter.
@@ -391,6 +385,7 @@ void getStations(string filePath, string stationlist[]){
 	ifstream infile;
 	string line;
 	int debug = false;
+	
 	// Open the file to read the schedule contents
 	infile.open("stations.dat");
 	// this gets rid of the number
@@ -398,10 +393,10 @@ void getStations(string filePath, string stationlist[]){
 	int i=0;
 	
 	// While there is a line to get, and there fewer than 100 records
-	while(!infile.eof()){
+	while(infile >> number;){
 		
 		// Store the Number
-		infile >> number;
+		
 		
 		// Store the Name
 		getline(infile, stationlist[i]);
@@ -583,8 +578,7 @@ string printSingleStation(string stationList[], int stationNumber){
  *	^	This is the array that the train schedule data will be returned in.
  *
  * @author NoremacSkich | 2014/4/14
- * @modified NoremacSkich | 2014/4/22
- *
+ * @modified NoremacSkich | 2014/4/28
  * @return 
  *	^	See the trainSched[] parameter.
  */
@@ -606,13 +600,14 @@ void getTrains(string filePath, TRAINS trainSched[]){
 	}
 	
 	int i=0;
-	
+	string garbage = "";
 	// While there is a line to get, and there fewer than 100 records
-	while(!infile.eof()){
+	while(infile >> trainSched[i].Departure_Station){
 		// for some reason, not stopping at last line, reads in a blank record,
 		// then stops.
 		// Store the train info
-		infile >> trainSched[i].Departure_Station;
+		//cout << garbage;
+		//garbage >> trainSched[i].Departure_Station;
 		infile >> trainSched[i].Arrival_Station;
 		infile >> trainSched[i].Departure_Time;
 		infile >> trainSched[i].Arrival_Time;
@@ -621,7 +616,8 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		trainSched[i].Travel_Time = trainSched[i].Arrival_Time - trainSched[i].Departure_Time;
 		trainSched[i].DT_String = minToHour(trainSched[i].Departure_Time);
 		trainSched[i].AT_String = minToHour(trainSched[i].Arrival_Time);
-
+		trainSched[i].valid = true;
+		
 		// Show the train info
 		printTrainInfo(trainSched, i);
 		
@@ -657,6 +653,7 @@ void printTrainInfo(TRAINS trainSched[], int trainID){
 	cout << "Travel_Time: \"" << trainSched[i].Travel_Time << "\"" << endl;
 	cout << "DT_String: \"" << trainSched[i].DT_String << "\"" << endl;
 	cout << "AT_String: \"" << trainSched[i].AT_String << "\"" << endl;
+	cout << "Valid: \"" << trainSched[i].valid << "\"" << endl;
 	cout << "-------------------" << endl;
 	
 }
@@ -695,6 +692,24 @@ void showTrainSched(string stations[]){
 	
 }
 
+void fillMatrix(TRAINS trainList[], TRAINS adjMatrix[100][100]){
+	// For all the trains on the train list
+	for(int i=0; i<100; i++){
+		if(trainList[i].valid == false){
+			break;
+		}
+		// get the arrival and departure stations, and copy over the record
+		cout << i << endl;
+		adjMatrix[trainList[i].Departure_Station][trainList[i].Arrival_Station] = trainList[i];
+	}
+	
+	
+	//MATRIX floyds[numStations, numStations];
+	
+	//floyds[train.departureStation, train.arrivalStation].infinity = false;
+	//floyds[train.departureStation, train.arrivalStation].cost = #;
+	
+}
 // ================= OTHER ========================
 /**@fun showMainMenu(void)
  *	^	This will print out the main menu.
@@ -839,6 +854,21 @@ string convertInt(int number)
    return ss.str();//return a string with the contents of the stream
 }
 
+void initMatrix(TRAINS matrix[100][100]){
+	for(int j = 0; j<100; j++){
+		for(int i = 0; i<100; i++){
+			matrix[j][i].Departure_Station = -1;
+			matrix[j][i].Arrival_Station = -1;
+			matrix[j][i].Departure_Time = -1;
+			matrix[j][i].Arrival_Time = -1;
+			matrix[j][i].Travel_Time = -1;
+			matrix[j][i].DT_String = "-";
+			matrix[j][i].AT_String = "-";
+			matrix[j][i].valid = false;
+		}
+	}
+}
+	
 // ====== main driver ==============================
 int main(void)
 {
@@ -846,7 +876,8 @@ int main(void)
 	
 	// Create the train Schedule array
 	TRAINS trainSched[100];
-	// Sanitize / initialize the Array
+	
+	// Sanitize / initialize the train schedules
 	for(int i = 0; i<100; i++){
 		trainSched[i].Departure_Station = -1;
 		trainSched[i].Arrival_Station = -1;
@@ -856,19 +887,28 @@ int main(void)
 		trainSched[i].DT_String = "-";
 		trainSched[i].AT_String = "-";
 	}
+	
+	
+	// Create the adjancy Matrix of know values
+	TRAINS adjMatrix[100][100];
+	
+	// Initialize the adjancy matrix for know values
+	initMatrix(adjMatrix);
+	
 	// Create the station list array
-	string stationlist[100];
+	string stationList[100];	
 	
-	cout << "getStations" << endl;
 	// Populate the stations array
-	getStations(stationsFile, stationlist);
+	getStations(stationsFile, stationList);
 	
-	cout << "getTrains" << endl;
 	// Populate the train array
 	getTrains(trainsFile, trainSched);
+	cout << "get trains end" << endl;
+	// Populate the adjacency matrix of know values
+	fillMatrix(trainSched, adjMatrix);
 	
 	cout << "Show Stations" << endl;
-	showStations(stationlist, 5, 1);
+	showStations(stationList, 5, 1);
 	
 	
 	/*
