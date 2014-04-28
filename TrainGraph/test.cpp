@@ -24,7 +24,7 @@ void printArray(int myarray[4][4]){
 	}
 	cout << endl;
 }
-/**@fun shortest(TRAINS a, TRAINS c, TRIANS p)
+/**@fun shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf)
  *	^	This calculates the shortest path between two stations based on the 
  *		path of the trains
  *	I	This is based on Floyd's Algorithm
@@ -77,7 +77,7 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
 		}
 	}
 }
-/**@fun path(int i, int j, TRAINS p)
+/**@fun path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
  *	^	This will get the stations between the two given stations
  *
  * @param shortMatrix | Integer | Array
@@ -92,18 +92,10 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
  * @param j | integer
  *	^	This is the ending vertex
  *
- * @param stations[4] | integer | Array
- *	^	This is the array that contains the complete path from station (i) to 
- *		station (j)
- *
- * @param[io] stationsI | integer
- *	^	This will keep track of the current position of the station index.
- *		should be modified on each call.
- *
  * @author NoremacSkich | 2014/4/21
  * @modified NoremacSkich | 2014/4/28
  *
- * @reverted NoremacSkich | 3 commits ago
+ * @reverted NoremacSkich | 2014/4/28
  *
  */
 
@@ -139,13 +131,13 @@ string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
 	return "";
  }
  
-/**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stations[4])
+/**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100])
  *	^	This will fill in the array for the station order (stations)
  * 
- * @param shortMatrix[4][4] | integer | array
+ * @param shortMatrix | integer | array[4][4]
  *	^	This is the matrix containing an array of shortest paths
  * 
- * @param middleMatrix[4][4] | integer | array
+ * @param middleMatrix | integer | array [4][4]
  *	^	This is the matrix containing the next train to board
  * 
  * @param start | integer
@@ -154,7 +146,7 @@ string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
  * @param end | integer
  *	^	This is the ending station
  * 
- * @param verticesList[4] | integer | Array
+ * @param verticesList | integer | Array[100]
  *	^	This is the array that contains the complete path from station (i) to 
  *		station (j)
  *	N	This should be returned modified.

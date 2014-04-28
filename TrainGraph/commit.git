@@ -1,11 +1,11 @@
-Floyd's Wrapup, now Integrate
+Moving Over . . . Success
 
-increased station list size to 100
-it all works, need to integrate into other program
+Managed to move the functions over, and there seems to be no problem.
 
-Created:
-1	void pathToTable(string verticesList[100], string trainpath)
+Modified:
+1	test.cpp
+2	traingraph.cpp
 
 Reasons:
-1	This will fill in the table.
-
+1	updated a few documentation errors
+2	Moved over the floyd's algorithm functions

@@ -101,6 +101,15 @@ struct TRAINS{
 
 // ================= PROTOTYPES ========================
 
+// ================= Floyd's Prototypes ================
+void printVerticesList(string verticesList[100]);
+void pathToTable(string verticesList[100], string trainpath);
+void printArray(int myarray[4][4]);
+void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf);
+string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
+void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
+
+
 // ================= PROTOTYPES FOR STATIONS ========================
 
 // this will print out all the stations.
@@ -147,59 +156,62 @@ string convertInt(int number);
 
 // print out the train info
 void printTrainInfo(TRAINS trainSched[], int trainID);
+
+void printRoute(TRAINS trainInfo[], string Stations[]);
 //=========================== FUNCTIONS ===========================
 
-/**@fun shortest(TRAINS a, TRAINS c, TRIANS p)
+/**@fun shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf)
  *	^	This calculates the shortest path between two stations based on the 
  *		path of the trains
  *	I	This is based on Floyd's Algorithm
  *
- * @param a | TRAINS
- *	^	The Adjacency Matrix
+ * @param adjMatrix | TRAINS
+ *	^	The Adjacency Matrix, this is the matrix with all known values
  *
- * @param c | TRAINS
- *	^	The Adjacency Matrix of shortest paths
+ * @param shortMatrix | TRAINS
+ *	^	The Short Matrix, aka the cost matrix.  This is the computed list of
+ *		shortest paths.
  *
- * @param p | TRAINS
- *	^	This holds all the stations between the two stations
+ * @param middleMatrix | TRAINS
+ *	^	This will hold the station with the next train to get to destination.
+ *
+ * @param numVertexes | Integer
+ *	^	This is the number of stations there are.
+ *
+ * @param inf | Integer
+ *	^	This is what the infinity value is.
  *
  * @author NoremacSkich | 2014/4/21
  * @modified NoremacSkich | 2014/4/25
+ * @modified NoremacSkich | 2014/4/28
+ *
  */
+void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf){
 
- void shortest(TRAINS a, TRAINS c, TRAINS p){
-/*	
-	int i;
-	int j;
-	int k;
-	int infinity = 500;
-	
-	// Copy a into c
-	for(i=0; i<infinity; i++){
-		for(j=0; j<infinity; i++){
-			a[i,j].Travel_Time = c[i,j].Travel_Time;
-			p[i,j].Travel_Time = 0; // set p to zero
+	// Copy adjacency matrix into the shortest path matrix
+	for(int i=0; i<numVertexes; i++){
+		for(int j=0; j<numVertexes; j++){
+			shortMatrix[i][j] = adjMatrix[i][j];
+			middleMatrix[i][j] = -1; // set p to 
 		}
 	}
-	
+
 	// Set distance to self as 0
-	for(i=0; i<infinity; i++){
-		a[i,i].Travel_Time = 0;
+	for(int i=0; i<numVertexes; i++){
+		middleMatrix[i][i] = 0;
 	}
-	
+
 	// Compute the shortest paths
-	for(k=0; k<infinity; k++){
-		for(i=0; i<infinity; i++){
-			for(j=0; j<infinity; j++){
-				if(a[i,k].Travel_Time + a[k,j].Travel_Time < a[i,j].Travel_Time){
-					a[i,j].Travel_Time = a[i, k].Travel_Time + a[k,j].Travel_Time;
-					p[i,j].Travel_Time = k; // record the middle path
+	for(int k=0; k<numVertexes; k++){
+		for(int i=0; i<numVertexes; i++){
+			for(int j=0; j<numVertexes; j++){
+				if( shortMatrix[i][k] + shortMatrix[k][j] < shortMatrix[i][j] ){ // works
+					shortMatrix[i][j] = shortMatrix[i][k] + shortMatrix[k][j];// works
+					middleMatrix[i][j] = k; // record the middle path
 				}
 			}
 		}
 	}
-	
-*/	
 }
 void fillMatrix(STATIONS stationList[], TRAINS trainList[]){
 	//MATRIX floyds[numStations, numStations];
@@ -208,42 +220,151 @@ void fillMatrix(STATIONS stationList[], TRAINS trainList[]){
 	//floyds[train.departureStation, train.arrivalStation].cost = #;
 	
 }
-/**@fun path(int i, int j, TRAINS p)
+/**@fun path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
  *	^	This will get the stations between the two given stations
  *
+ * @param shortMatrix | Integer | Array
+ *	^	This is the matrix with all the computed shortest paths
+ * 
+ * @param middleMatrix | Integer | Array
+ *	^	This will hold the station with the next train to get to destination.
+ *
  * @param i | integer
- *	^	???
+ *	^	This is the starting vertex
  *
  * @param j | integer
- *	^	???
+ *	^	This is the ending vertex
  *
- * @param p | TRAINS | Array
- *	^	
  * @author NoremacSkich | 2014/4/21
+ * @modified NoremacSkich | 2014/4/28
+ *
+ * @reverted NoremacSkich | 2014/4/28
  *
  */
 
-void path(int i, int j, TRAINS p){
-/*	int k;
-	// Set k to the midpoint of i -> j
-	k = p[i, j];
-	
-	// Grounding Condition
-	if(k==0){
+string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
+ 	stringstream returnString;	// This will hold the HH:MM APM string
+ 	
+ 	// Check if path exists, and if there is a mid path
+	if(shortMatrix[i][j] != 50 && middleMatrix[i][j] !=-1){
+
+		// This is the middle point
+		int k;
+		// Set k to the midpoint of i -> j
+		k = middleMatrix[i][j];
 		
-		// This is a direct path, exit the function
-		return;
+		// Grounding Condition
+		if(k==-1){
+			
+			// This is a direct path, exit the function
+			return "";
+		}
+	
+		// Get the midpoint between i -> k
+		returnString << path(shortMatrix, middleMatrix, i,k);
+		
+		// process the midpoint
+		returnString << k << " ";
+		
+		// get the midpoint between k -> j
+		returnString << path(shortMatrix, middleMatrix, k,j);
+		
+		return returnString.str();
+	}
+	return "";
+ }
+ 
+/**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100])
+ *	^	This will fill in the array for the station order (stations)
+ * 
+ * @param shortMatrix | integer | array[4][4]
+ *	^	This is the matrix containing an array of shortest paths
+ * 
+ * @param middleMatrix | integer | array [4][4]
+ *	^	This is the matrix containing the next train to board
+ * 
+ * @param start | integer
+ *	^	This is the starting station
+ * 
+ * @param end | integer
+ *	^	This is the ending station
+ * 
+ * @param verticesList | integer | Array[100]
+ *	^	This is the array that contains the complete path from station (i) to 
+ *		station (j)
+ *	N	This should be returned modified.
+ *	N	This should probably be a linked list, but for now will use a string
+ *
+ * @author NoremacSkich | 2014/4/28
+ */
+void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]){
+	stringstream returnString;	// This will hold the HH:MM APM string
+	
+	// Check to make sure stations exist
+	if(start > numStations){
+		// starting station doesn't exist
+		return ;
 	}
 	
-	// Get the midpoint between i -> k
-	path(i,k);
+	if(end > numStations){
+		// ending station doesn't exist
+		return ;
+	}
 	
-	// process the midpoint
-	cout << k;
+	// See if route doesn't exist
+	if(shortMatrix[start][end] == 50){
+		// there is no route between the starting and stopping stations
+		return ;
+	}
 	
-	// get the midpoint between k -> j
-	path(k,j);
-*/
+	// is This is going to itself?
+	if(middleMatrix[start][end] == 0){
+		// The starting and stopping stations are the same
+		return ;
+	}
+	
+	// initialize the stations index value (stationI)
+	int stationI = 0;
+	
+	// Set the first element in the array, in this case, the first station
+	returnString << start << ",";
+	
+	// Then find all the middle stations, and put them into the string
+	returnString << path( shortMatrix, middleMatrix, start, end);
+	
+	// Finally put the last station in the array
+	returnString << end;
+	
+	// create the table from the string
+	pathToTable(verticesList, returnString.str());
+	
+	// Print out the station list.
+	printVerticesList(verticesList);
+}
+
+void pathToTable(string verticesList[100], string trainpath){
+	stringstream stream;
+	stream << trainpath;
+	for(int i=0;i<=100;i++){
+		// If there is no more numbers, break the loop early
+		if(stream.rdbuf()->in_avail() == 0){
+			break;
+		}
+		stream >> verticesList[i];
+	}
+}
+
+// Note: if the array spot was not used, then it will equal 101
+void printVerticesList(string verticesList[100]){
+	for(int i=0; i<100; i++){
+		// Short Circuit the readout
+		if(verticesList[i] == "101"){
+			break;
+		}
+		// Print out the station ID
+		cout << verticesList[i] << ",";
+	}
+	cout << endl;
 }
 
 // ================= STATIONS ========================
@@ -317,7 +438,7 @@ void printShortTime(TRAINS trainInfo[], string Stations[], string startStation, 
 	cout << "You will take the following trains:" << endl;
 	
 	// This is where the printRoute function will be called.
-	printRoute(trainInfo, Stations)
+	printRoute(trainInfo, Stations);
 	
 	cout << "END OF REPORT" << endl;
 	
@@ -338,9 +459,9 @@ void printRoute(TRAINS trainInfo[], string Stations[]){
 	
 	
 	// 
-	cout << "Leave" << Stations[trainInfo.Departure_Station] << "at";
-	cout << trainInfo.DT_String << " and arrive at " << Stations[trainInfo.Arrival_Station];
-	cout << " at " << trainInfo.AT_String << "." << endl;
+	//cout << "Leave" << Stations[trainInfo.Departure_Station] << "at";
+	//cout << trainInfo.DT_String << " and arrive at " << Stations[trainInfo.Arrival_Station];
+	//cout << " at " << trainInfo.AT_String << "." << endl;
 	
 
 }
