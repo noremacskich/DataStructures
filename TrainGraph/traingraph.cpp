@@ -95,6 +95,7 @@ struct TRAINS{
 	int Travel_Time;
 	string DT_String;
 	string AT_String;
+	bool valid;
 };
 
 
@@ -307,16 +308,16 @@ void getStations(string filePath, string stationlist[]){
  * @author NoremacSkich | 2014/4/21
  *
  */
-void printShortTime(string startStation, string endStation){
+void printShortTime(TRAINS trainInfo[], string Stations[], string startStation, string endStation, int numHours, int numMinutes){
 	
 	cout << "REPORT 1: Shortest time riding on Trains." << endl;
-	//cout << "To go from " << startStation << " to " << endStation << "you will need to ride on trains for " << endl;
-	//cout << numHours << " hours and " << numMinutes << " minutes." << endl;
+	cout << "To go from " << startStation << " to " << endStation << "you will need to ride on trains for " << endl;
+	cout << numHours << " hours and " << numMinutes << " minutes." << endl;
 	
 	cout << "You will take the following trains:" << endl;
 	
 	// This is where the printRoute function will be called.
-	
+	printRoute(trainInfo, Stations)
 	
 	cout << "END OF REPORT" << endl;
 	
@@ -328,10 +329,19 @@ void printShortTime(string startStation, string endStation){
  * @author NoremacSkich | 2014/4/21
  *
  */
-void printRoute(TRAINS trainInfo){
+void printRoute(TRAINS trainInfo[], string Stations[]){
 	
-	// The contents for this come from the P array
-	//cout << trainInfo.routeString << endl;
+	// Get rout info from matrix
+	
+	// Print out the information.
+	
+	
+	
+	// 
+	cout << "Leave" << Stations[trainInfo.Departure_Station] << "at";
+	cout << trainInfo.DT_String << " and arrive at " << Stations[trainInfo.Arrival_Station];
+	cout << " at " << trainInfo.AT_String << "." << endl;
+	
 
 }
 
@@ -490,7 +500,7 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		trainSched[i].Travel_Time = trainSched[i].Arrival_Time - trainSched[i].Departure_Time;
 		trainSched[i].DT_String = minToHour(trainSched[i].Departure_Time);
 		trainSched[i].AT_String = minToHour(trainSched[i].Arrival_Time);
-		
+
 		// Show the train info
 		printTrainInfo(trainSched, i);
 		
