@@ -1,7 +1,12 @@
-Printing Matrix Array Modification . . . Done
-Created:
-1	void printArray(int myarray[4][4])
+Shortest Path Modification . . . Failed
+
+Modified:
+1	void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf) ->
+	void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], TRAINS middleMatrix[100][100], int numVertexes)
 
 Reasons:
-1	Forgot to copy this over along with the other floyd's algorithm functions,
-	then modified it to print out the matrix table.
+1	This now works with the trains.  No longer need the inf value, that is 
+	taken care of by the data structure.  The inf value is actually redundent.
+	
+Notes
+1	Couldn't get this to work, moving on to using integer arrays again :(

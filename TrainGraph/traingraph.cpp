@@ -108,7 +108,7 @@ void printArray(int myarray[100][100]);
 void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf);
 string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
 void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
-
+void printArray(int myarray[100][100]);
 
 // ================= PROTOTYPES FOR STATIONS ========================
 
@@ -186,29 +186,35 @@ void printRoute(TRAINS trainInfo[], string Stations[]);
  * @modified NoremacSkich | 2014/4/28
  *
  */
-void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf){
+void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int middleMatrix[100][100], int numVertexes){
 
 	// Copy adjacency matrix into the shortest path matrix
 	for(int i=0; i<numVertexes; i++){
 		for(int j=0; j<numVertexes; j++){
-			shortMatrix[i][j] = adjMatrix[i][j];
-			middleMatrix[i][j] = -1; // set p to 
+			shortMatrix[i][j].Travel_Time = adjMatrix[i][j].Travel_Time;
+			shortMatrix[i][j].valid = adjMatrix[i][j].valid;
+			
+			//shortMatrix[i][j] = adjMatrix[i][j];
+			middleMatrix[i][j] = -1;// set p to 0
 		}
 	}
 
 	// Set distance to self as 0
+	// Use as check for station going to itself
 	for(int i=0; i<numVertexes; i++){
-		middleMatrix[i][i] = 0;
+		middleMatrix[i][i]= 0;
 	}
 
 	// Compute the shortest paths
 	for(int k=0; k<numVertexes; k++){
 		for(int i=0; i<numVertexes; i++){
 			for(int j=0; j<numVertexes; j++){
-				if( shortMatrix[i][k] + shortMatrix[k][j] < shortMatrix[i][j] ){ // works
-					shortMatrix[i][j] = shortMatrix[i][k] + shortMatrix[k][j];// works
+				
+				if( shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time < shortMatrix[i][j].Travel_Time ){ // works
+					shortMatrix[i][j].Travel_Time = shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time;// works
 					middleMatrix[i][j] = k; // record the middle path
 				}
+				
 			}
 		}
 	}
@@ -360,7 +366,27 @@ void printVerticesList(string verticesList[100]){
 	}
 	cout << endl;
 }
-
+void printArray(int myarray[100][100]){
+	
+	// need space for row headings
+	cout << " ";
+	// print out the numbers for the stations
+	for(int i=0; i<numTrains; i++){
+		cout << setw(6) << i;
+	}
+	
+	// Move to next line
+	cout << endl;
+	
+	for(int i=0; i<numTrains; i++){
+		cout << i << " ";
+		for(int j=0; j<numTrains; j++){
+			cout << setw(5) << myarray[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+}
 void printArray(TRAINS myarray[100][100]){
 	
 	// need space for row headings
@@ -641,7 +667,7 @@ void getTrains(string filePath, TRAINS trainSched[]){
 		trainSched[i].valid = true;
 		
 		// Show the train info
-		printTrainInfo(trainSched, i);
+		//printTrainInfo(trainSched, i);
 		
 		// Goto next spot in the array.
 		i++;
@@ -891,7 +917,7 @@ void initMatrix(TRAINS matrix[100][100]){
 		}
 	}
 }
-	
+
 // ====== main driver ==============================
 int main(void)
 {
@@ -918,6 +944,18 @@ int main(void)
 	// Initialize the adjancy matrix for know values
 	initMatrix(adjMatrix);
 	
+	// Create the adjancy matrix for calculated shortest path values
+	TRAINS shortMatrix[100][100];
+	
+	// Initialize the short matrix
+	initMatrix(adjMatrix);
+	
+	// Create the middle matrix
+	int middleMatrix[100][100];
+	
+	// initilize teh middle matrix
+	//initMatrix(middleMatrix);
+	
 	// Create the station list array
 	string stationList[100];	
 	
@@ -926,12 +964,30 @@ int main(void)
 	
 	// Populate the train array
 	getTrains(trainsFile, trainSched);
-	cout << "get trains end" << endl;
+	
 	// Populate the adjacency matrix of know values
 	fillMatrix(trainSched, adjMatrix);
 	
-	// print out the adjancy matrix
+	// Along with the Short Matrix
+	// This is me being extremely lazy.
+	fillMatrix(trainSched, shortMatrix);
+	cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
+	cout << endl << "Short Matrix" << endl;
+	printArray(shortMatrix);
+	cout << endl << "Middle Matrix" << endl;
+	printArray(middleMatrix);
+	
+	cout << endl << "Shortest" << endl;
+	shortest(adjMatrix, shortMatrix, middleMatrix, numStations);
+	
+	// print out the adjancy matrix
+	cout << endl << "Adjancey Matrix" << endl;
+	printArray(adjMatrix);
+	cout << endl << "Short Matrix" << endl;
+	printArray(shortMatrix);
+	cout << endl << "Middle Matrix" << endl;
+	printArray(middleMatrix);
 	
 	cout << "Show Stations" << endl;
 	showStations(stationList, 5, 1);
