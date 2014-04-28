@@ -5,6 +5,8 @@ using namespace std;
 
 static int numStations = 4;
 
+void printStationList(int stations[4]);
+
 void printArray(int myarray[4][4]){
 	
 	cout << "    0   1   2   3" << endl;
@@ -100,8 +102,13 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
  */
 
 void path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stations[4], int stationsI ){
- 	stringstream returnString;	// This will hold the HH:MM APM string
  	
+ 	cout << endl << "In Path, stationsI = " << stationsI << endl;
+ 	printStationList(stations);
+ 		
+		// Increment the station counter
+	stationsI++;
+	
  	// Check if path exists, and if there is a mid path
 	if(shortMatrix[i][j] != 50 && middleMatrix[i][j] !=-1){
 		
@@ -115,23 +122,19 @@ void path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stati
 		if(k==-1){
 			
 			// This is a direct path, exit the function
-			return;
+			return ;
 		}
 	
 		// Get the midpoint between i -> k
 		path(shortMatrix, middleMatrix, i,k, stations, stationsI);
-		
-		// Increment the station counter
-		stationsI++;
-		
+
 		// Store the midpoint
 		stations[stationsI] = k;
 		
 		// get the midpoint between k -> j
 		path(shortMatrix, middleMatrix, k,j, stations, stationsI);
-		
-		
 	}
+
  }
  
 /**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j, int stations[4])
@@ -187,17 +190,25 @@ void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int 
 	
 	// Set the first element in the array, in this case, the first station
 	stations[stationI] = start;
+	
 	// increment the station counter
 	stationI++;
+	
+	// Print out the station list.
+	printStationList(stations);
+	
 	// Then find all the middle stations, and put them into the array
 	path( shortMatrix, middleMatrix, start, end, stations, stationI);
 	
 	// Finally put the last station in the array
 	stations[stationI] = end;
+	
+	// Print out the station list.
+	printStationList(stations);
 }
 // Note: if the array spot was not used, then it will equal 101
 void printStationList(int stations[4]){
-	for(int i=0; i<=4; i++){
+	for(int i=0; i<4; i++){
 		cout << stations[i] << ",";
 	}
 	cout << endl;
@@ -219,8 +230,8 @@ int main(void)
 	// inf means there doesn't exist an path between the two points
 	int adjMatrix[4][4] = 
 	{
-		{inf,  10,  10, inf },
-		{inf, inf,  30, inf },
+		{inf,  10,  30, inf },
+		{inf, inf,  10, inf },
 		{inf, inf, inf,   5 },
 		{inf, inf, inf, inf }
 	};
@@ -248,12 +259,17 @@ int main(void)
 	//do{
 		// Initialize the starting list
 		int stationList[4] = {101};
-		
+		for(int i=0; i<=4; i++){
+			stationList[i] = 101;
+		}
 		// Ask for the starting and stopping stations
 		cout << "Start: ";
 		cin >> start;
 		cout << " End: ";
 		cin >> end;
+		
+		// Print out the station list.
+		printStationList(stationList);
 		
 		// Get the complete path between stations
 		completePath( shortMatrix, middleMatrix, start, end, stationList);
