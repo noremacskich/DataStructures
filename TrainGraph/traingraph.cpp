@@ -105,10 +105,10 @@ struct TRAINS{
 void printVerticesList(string verticesList[100]);
 void pathToTable(string verticesList[100], string trainpath);
 void printArray(int myarray[100][100]);
-void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf);
+void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int middleMatrix[100][100], int numVertexes, int inf);
 string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
 void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
-void printArray(int myarray[100][100]);
+void printArray(TRAINS myarray[100][100]);
 
 // ================= PROTOTYPES FOR STATIONS ========================
 
@@ -182,19 +182,18 @@ void printRoute(TRAINS trainInfo[], string Stations[]);
  *	^	This is what the infinity value is.
  *
  * @author NoremacSkich | 2014/4/21
- * @modified NoremacSkich | 2014/4/25
- * @modified NoremacSkich | 2014/4/28
+ * @modified NoremacSkich | 2014/4/29
  *
+ * @note NoremacSkich | 2014/4/29
+ *	^	This should be using the valid attribute of the trains, but can't seem
+ *		to integrate that right now.
  */
 void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int middleMatrix[100][100], int numVertexes){
 
 	// Copy adjacency matrix into the shortest path matrix
 	for(int i=0; i<numVertexes; i++){
 		for(int j=0; j<numVertexes; j++){
-			shortMatrix[i][j].Travel_Time = adjMatrix[i][j].Travel_Time;
-			shortMatrix[i][j].valid = adjMatrix[i][j].valid;
-			
-			//shortMatrix[i][j] = adjMatrix[i][j];
+			shortMatrix[i][j] = adjMatrix[i][j];
 			middleMatrix[i][j] = -1;// set p to 0
 		}
 	}
@@ -204,17 +203,21 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
 	for(int i=0; i<numVertexes; i++){
 		middleMatrix[i][i]= 0;
 	}
-
+	cout << "Before Sort" << endl;
+	printArray(shortMatrix);
+	cout << "After Sort" << endl;
 	// Compute the shortest paths
-	for(int k=0; k<numVertexes; k++){
-		for(int i=0; i<numVertexes; i++){
-			for(int j=0; j<numVertexes; j++){
-				
-				if( shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time < shortMatrix[i][j].Travel_Time ){ // works
+	for(int k=0; k < numVertexes; k++){
+		//printArray(shortMatrix);
+		for(int i=0; i < numVertexes; i++){
+			for(int j=0; j < numVertexes; j++){
+				//if( shortMatrix[i][k].valid && shortMatrix[k][j].valid){
+				if( shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time < shortMatrix[i][j].Travel_Time){ // works
 					shortMatrix[i][j].Travel_Time = shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time;// works
+					//printArray(shortMatrix);
 					middleMatrix[i][j] = k; // record the middle path
 				}
-				
+				//}
 			}
 		}
 	}
@@ -910,7 +913,7 @@ void initMatrix(TRAINS matrix[100][100]){
 			matrix[j][i].Arrival_Station = -1;
 			matrix[j][i].Departure_Time = -1;
 			matrix[j][i].Arrival_Time = -1;
-			matrix[j][i].Travel_Time = -1;
+			matrix[j][i].Travel_Time = 50000;
 			matrix[j][i].DT_String = "-";
 			matrix[j][i].AT_String = "-";
 			matrix[j][i].valid = false;
@@ -948,7 +951,7 @@ int main(void)
 	TRAINS shortMatrix[100][100];
 	
 	// Initialize the short matrix
-	initMatrix(adjMatrix);
+	initMatrix(shortMatrix);
 	
 	// Create the middle matrix
 	int middleMatrix[100][100];
@@ -970,7 +973,7 @@ int main(void)
 	
 	// Along with the Short Matrix
 	// This is me being extremely lazy.
-	fillMatrix(trainSched, shortMatrix);
+	//fillMatrix(trainSched, shortMatrix);
 	cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
 	cout << endl << "Short Matrix" << endl;
@@ -978,9 +981,10 @@ int main(void)
 	cout << endl << "Middle Matrix" << endl;
 	printArray(middleMatrix);
 	
-	cout << endl << "Shortest" << endl;
+	cout << endl << "Shortest" << numStations << endl;
 	shortest(adjMatrix, shortMatrix, middleMatrix, numStations);
 	
+	cout << "After the Sort" << endl;
 	// print out the adjancy matrix
 	cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
@@ -990,7 +994,7 @@ int main(void)
 	printArray(middleMatrix);
 	
 	cout << "Show Stations" << endl;
-	showStations(stationList, 5, 1);
+	//showStations(stationList, 5, 1);
 	
 	
 	/*

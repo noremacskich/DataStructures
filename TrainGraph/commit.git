@@ -1,12 +1,24 @@
-Shortest Path Modification . . . Failed
+Shortest Path Modification v2. . . Successish
 
-Modified:
-1	void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf) ->
-	void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], TRAINS middleMatrix[100][100], int numVertexes)
+Modified: traingraph.cpp
+1	void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], 
+		TRAINS middleMatrix[100][100], int numVertexes)
 
 Reasons:
-1	This now works with the trains.  No longer need the inf value, that is 
-	taken care of by the data structure.  The inf value is actually redundent.
+1	Got this working, by using big initial travel time value (50000), not the 
+	valid attribute.  Really should be using the valid parameter, but not 
+	wanting to deal with it now.
 	
-Notes
-1	Couldn't get this to work, moving on to using integer arrays again :(
+Modified: test.cpp
+1	void shortest(int adjMatrix[4][4], int shortMatrix[4][4], 
+		int middleMatrix[4][4], int numVertexes)
+
+Reasons:
+1	Removed the infinity value, it seems to be not needed for now.
+
+Modified: trains.dat
+1	-
+
+Reasons:
+1	I went and created a simple graph to test out the functions, and removed 
+	the made up values.

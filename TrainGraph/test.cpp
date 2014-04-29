@@ -24,7 +24,7 @@ void printArray(int myarray[4][4]){
 	}
 	cout << endl;
 }
-/**@fun shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf)
+/**@fun shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes)
  *	^	This calculates the shortest path between two stations based on the 
  *		path of the trains
  *	I	This is based on Floyd's Algorithm
@@ -42,15 +42,11 @@ void printArray(int myarray[4][4]){
  * @param numVertexes | Integer
  *	^	This is the number of stations there are.
  *
- * @param inf | Integer
- *	^	This is what the infinity value is.
- *
  * @author NoremacSkich | 2014/4/21
- * @modified NoremacSkich | 2014/4/25
- * @modified NoremacSkich | 2014/4/28
+ * @modified NoremacSkich | 2014/4/29
  *
  */
-void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf){
+void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes){
 
 	// Copy adjacency matrix into the shortest path matrix
 	for(int i=0; i<numVertexes; i++){
@@ -69,7 +65,8 @@ void shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4]
 	for(int k=0; k<numVertexes; k++){
 		for(int i=0; i<numVertexes; i++){
 			for(int j=0; j<numVertexes; j++){
-				if( shortMatrix[i][k] + shortMatrix[k][j] < shortMatrix[i][j] ){ // works
+				//printArray(shortMatrix);
+				if( shortMatrix[i][k]+ shortMatrix[k][j] < shortMatrix[i][j] ){ // works
 					shortMatrix[i][j] = shortMatrix[i][k] + shortMatrix[k][j];// works
 					middleMatrix[i][j] = k; // record the middle path
 				}
@@ -253,7 +250,7 @@ int main(void)
 	int middleMatrix[4][4] = {inf};
 	
 	// Run the variation of floyds algorithm
-	shortest(adjMatrix, shortMatrix, middleMatrix, numVertices, inf);
+	shortest(adjMatrix, shortMatrix, middleMatrix, numVertices);
 	// put some space
 	cout << endl << endl;
 	
