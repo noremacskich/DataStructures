@@ -1,24 +1,19 @@
-Shortest Path Modification v2. . . Successish
+Path conversion . . . Success
 
 Modified: traingraph.cpp
-1	void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], 
-		TRAINS middleMatrix[100][100], int numVertexes)
-
-Reasons:
-1	Got this working, by using big initial travel time value (50000), not the 
-	valid attribute.  Really should be using the valid parameter, but not 
-	wanting to deal with it now.
+1	string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
+	-> 
+	string path(TRAINS shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
 	
-Modified: test.cpp
-1	void shortest(int adjMatrix[4][4], int shortMatrix[4][4], 
-		int middleMatrix[4][4], int numVertexes)
-
+2	void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, 
+		int end, string verticesList[100]) 
+	-> 
+	void completePath(TRAINS shortMatrix[4][4], int middleMatrix[4][4], 
+		int start, int end, string verticesList[100])
+		
 Reasons:
-1	Removed the infinity value, it seems to be not needed for now.
+1-2	Modified shortMatrix to be a TRAINS type.  Modified the function 
+	accordingly
+	
+	
 
-Modified: trains.dat
-1	-
-
-Reasons:
-1	I went and created a simple graph to test out the functions, and removed 
-	the made up values.

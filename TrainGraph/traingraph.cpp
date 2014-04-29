@@ -106,8 +106,8 @@ void printVerticesList(string verticesList[100]);
 void pathToTable(string verticesList[100], string trainpath);
 void printArray(int myarray[100][100]);
 void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int middleMatrix[100][100], int numVertexes, int inf);
-string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j );
-void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]);
+string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int j );
+void completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end, string verticesList[100]);
 void printArray(TRAINS myarray[100][100]);
 
 // ================= PROTOTYPES FOR STATIONS ========================
@@ -245,11 +245,11 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
  *
  */
 
-string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
+string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int j ){
  	stringstream returnString;	// This will hold the HH:MM APM string
  	
  	// Check if path exists, and if there is a mid path
-	if(shortMatrix[i][j] != 50 && middleMatrix[i][j] !=-1){
+	if(shortMatrix[i][j].Travel_Time != 50 && middleMatrix[i][j] !=-1){
 
 		// This is the middle point
 		int k;
@@ -300,7 +300,7 @@ string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j ){
  *
  * @author NoremacSkich | 2014/4/28
  */
-void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100]){
+void completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end, string verticesList[100]){
 	stringstream returnString;	// This will hold the HH:MM APM string
 	
 	// Check to make sure stations exist
@@ -315,7 +315,7 @@ void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int 
 	}
 	
 	// See if route doesn't exist
-	if(shortMatrix[start][end] == 50){
+	if(shortMatrix[start][end].Travel_Time == 50000){
 		// there is no route between the starting and stopping stations
 		return ;
 	}
@@ -974,6 +974,12 @@ int main(void)
 	// Along with the Short Matrix
 	// This is me being extremely lazy.
 	//fillMatrix(trainSched, shortMatrix);
+	
+	cout << endl << "Shortest" << numStations << endl;
+	shortest(adjMatrix, shortMatrix, middleMatrix, numStations);
+	
+	cout << "After the Sort" << endl;
+	// print out the adjancy matrix
 	cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
 	cout << endl << "Short Matrix" << endl;
@@ -981,10 +987,30 @@ int main(void)
 	cout << endl << "Middle Matrix" << endl;
 	printArray(middleMatrix);
 	
-	cout << endl << "Shortest" << numStations << endl;
-	shortest(adjMatrix, shortMatrix, middleMatrix, numStations);
+	// Store the starting and stoping stations
+	int start = 0;
+	int end = 0;
 	
-	cout << "After the Sort" << endl;
+	// Initialize the verticesList
+	string verticesList[100];
+	// Set the default value at 101
+	for(int i=0; i<100; i++){
+		verticesList[i] = "101";
+	}
+	
+	// Ask for the starting and stopping stations
+	cout << "Start: ";
+	cin >> start;
+	cout << " End: ";
+	cin >> end;
+			
+	// Get the complete path between stations
+	completePath( shortMatrix, middleMatrix, start, end, verticesList);
+	
+	// Print out the station list.
+	printVerticesList(verticesList);
+	cout << endl << endl;
+	
 	// print out the adjancy matrix
 	cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
