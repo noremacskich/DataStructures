@@ -1,33 +1,14 @@
-Printing out Report . . . In Progress
+Printing out Report 2. . . In Progress
+
+Lost track of changes, but now will go and 
+make sure that the path will return an array of trains in order.
 
 Created:
-1	TRAINS findTrain(TRAINS trainList[100], int curStation, int nextStation)
-2	void minToHours(int minutes, int hours)
+1	routeMinutes
 
-Reasons:
-1	This will return the train that has the current station and next station.
-2	This will convert the inputed minutes into hours and minutes
 
-Modified: traingraph.cpp
-1	completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], 
-		int start, int end, string verticesList[100])
-2	showTrainSched(string stations[]) 
-	-> 
-	showTrainSched(string stations[], TRAINS shortMatrix[100][100], 
-		int middleMatrix[100][100])
-3	printRoute(TRAINS trainInfo[], string Stations[])
-	-> 
-	printRoute(TRAINS trainInfo, string Stations[])
-4	printShortTime(TRAINS trainInfo[], string Stations[], string startStation, 
-		string endStation, int numHours, int numMinutes)
-
-Reasons:
-1	Commented out printing the station list.
+Modified:
+1	fillMatrix(TRAINS trainList[], TRAINS adjMatrix[100][100])
 2
-3	Got this fixed, should now display route string.  Problem was that it was
-	looking for an array of trains, not just a train.
-4	updated the documentation
-
-Note:
-1	This would be easier if we gave each train an unique ID and referred to 
-	them that way.
+Reasons:
+1	Removed extranious comment lines from the bottom of the function.
