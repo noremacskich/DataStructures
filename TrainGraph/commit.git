@@ -1,19 +1,33 @@
-Path conversion . . . Success
+Printing out Report . . . In Progress
+
+Created:
+1	TRAINS findTrain(TRAINS trainList[100], int curStation, int nextStation)
+2	void minToHours(int minutes, int hours)
+
+Reasons:
+1	This will return the train that has the current station and next station.
+2	This will convert the inputed minutes into hours and minutes
 
 Modified: traingraph.cpp
-1	string path(int shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
-	-> 
-	string path(TRAINS shortMatrix[4][4], int middleMatrix[4][4], int i, int j )
-	
-2	void completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, 
-		int end, string verticesList[100]) 
-	-> 
-	void completePath(TRAINS shortMatrix[4][4], int middleMatrix[4][4], 
+1	completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], 
 		int start, int end, string verticesList[100])
-		
-Reasons:
-1-2	Modified shortMatrix to be a TRAINS type.  Modified the function 
-	accordingly
-	
-	
+2	showTrainSched(string stations[]) 
+	-> 
+	showTrainSched(string stations[], TRAINS shortMatrix[100][100], 
+		int middleMatrix[100][100])
+3	printRoute(TRAINS trainInfo[], string Stations[])
+	-> 
+	printRoute(TRAINS trainInfo, string Stations[])
+4	printShortTime(TRAINS trainInfo[], string Stations[], string startStation, 
+		string endStation, int numHours, int numMinutes)
 
+Reasons:
+1	Commented out printing the station list.
+2
+3	Got this fixed, should now display route string.  Problem was that it was
+	looking for an array of trains, not just a train.
+4	updated the documentation
+
+Note:
+1	This would be easier if we gave each train an unique ID and referred to 
+	them that way.
