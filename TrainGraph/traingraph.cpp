@@ -26,6 +26,7 @@ string trainsFile = "trains.dat";
 
 const int terminalWidth = 80;
 const int terminalHeight = 20;
+int globalPathCount = 0;
 
 // Store the number of stations
 int numStations = 0;
@@ -117,7 +118,7 @@ void showStations(string stations[]);
 
 // This will get the stations from file and return them to the stations array
 void getStations(string filePath, string stations[]);
-
+void printShortTime(string startStation, string endStation, int numHours, int numMinutes);
 // ================= PROTOTYPES FOR TRAINS ========================
 
 // This will print out all the id's and names for the train station
@@ -128,7 +129,9 @@ void getTrains(string filePath, TRAINS trainSched[]);
 
 // This prints out the 2 column station info
 string printSingleStation(string stationList[], int stationNumber);
-
+// initialize the matrix
+void initMatrix(TRAINS matrix[100][100]);
+void initMatrix(TRAINS matrix[100]);
 // ================= PROTOTYPES FOR FLOYD'S ALGORITHM ========================
 
 void shortest(TRAINS a, TRAINS c, TRAINS p);
@@ -159,7 +162,7 @@ string convertInt(int number);
 // print out the train info
 void printTrainInfo(TRAINS trainSched[], int trainID);
 
-void printRoute(TRAINS trainInfo[], string Stations[]);
+void printRoute(TRAINS trainInfo, string Stations[]);
 //=========================== FUNCTIONS ===========================
 
 /**@fun shortest(int adjMatrix[4][4], int shortMatrix[4][4], int middleMatrix[4][4], int numVertexes, int inf)
@@ -205,9 +208,9 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
 	for(int i=0; i<numVertexes; i++){
 		middleMatrix[i][i]= 0;
 	}
-	cout << "Before Sort" << endl;
-	printArray(shortMatrix);
-	cout << "After Sort" << endl;
+	//cout << "Before Sort" << endl;
+	//printArray(shortMatrix);
+	//cout << "After Sort" << endl;
 	// Compute the shortest paths
 	for(int k=0; k < numVertexes; k++){
 		//printArray(shortMatrix);
@@ -248,7 +251,8 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
  */
 
 string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int j ){
- 	stringstream returnString;	// This will hold the HH:MM APM string
+	// This is storing the path
+ 	stringstream returnString;
  	
  	// Check if path exists, and if there is a mid path
 	if(shortMatrix[i][j].Travel_Time != 50 && middleMatrix[i][j] !=-1){
@@ -270,10 +274,11 @@ string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int
 		
 		// process the midpoint
 		returnString << k << " ";
-		
+		globalPathCount++;
 		// get the midpoint between k -> j
 		returnString << path(shortMatrix, middleMatrix, k,j);
 		
+		// Return a string path of numbers that indicate the train order
 		return returnString.str();
 	}
 	return "";
@@ -302,46 +307,51 @@ string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int
  *
  * @author NoremacSkich | 2014/4/28
  */
-void completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end, string verticesList[100]){
+string completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end){
 	stringstream returnString;	// This will hold the HH:MM APM string
 	
 	// Check to make sure stations exist
 	if(start > numStations){
 		// starting station doesn't exist
-		return ;
+		return "";
 	}
 	
 	if(end > numStations){
 		// ending station doesn't exist
-		return ;
+		return "";
 	}
 	
 	// See if route doesn't exist
 	if(shortMatrix[start][end].Travel_Time == 50000){
 		// there is no route between the starting and stopping stations
-		return ;
+		return "";
 	}
 	
 	// is This is going to itself?
 	if(middleMatrix[start][end] == 0){
 		// The starting and stopping stations are the same
-		return ;
+		return "";
 	}
 	
 	// initialize the stations index value (stationI)
 	int stationI = 0;
 	
 	// Set the first element in the array, in this case, the first station
-	returnString << start << ",";
+	returnString << start << " ";
 	
+	// reset the global path variable
+	// Add two for the starting and ending station
+	globalPathCount = 2;
+
 	// Then find all the middle stations, and put them into the string
 	returnString << path( shortMatrix, middleMatrix, start, end);
 	
 	// Finally put the last station in the array
 	returnString << end;
 	
+	return returnString.str();
 	// create the table from the string
-	pathToTable(verticesList, returnString.str());
+	//pathToTable(trainRoute, returnString.str());
 	
 	// Print out the station list.
 	//printVerticesList(verticesList);
@@ -361,7 +371,7 @@ void pathToTable(string verticesList[100], string trainpath){
 
 // Note: if the array spot was not used, then it will equal 101
 // returns a string of station paths
-void printVerticesList(string verticesList[100], int trainRoute[100]){
+void printVerticesList(string verticesList[100]){
 	stringstream returnString;
 
 	for(int i=0; i<100; i++){
@@ -370,8 +380,8 @@ void printVerticesList(string verticesList[100], int trainRoute[100]){
 			break;
 		}
 		// Print out the station ID
-		istringstream (verticesList[i]) >> trainRoute[i];
-		//returnString << verticesList[i] << " ";
+		//istringstream (verticesList[i]) >> trainRoute[i];
+		returnString << verticesList[i] << " ";
 	}
 	//return returnString;
 }
@@ -417,11 +427,19 @@ void printArray(TRAINS myarray[100][100]){
 	}
 	cout << endl;
 }
-int trainStringtoInt(string routeStringPath){
+int stoi(string routeStringPath){
 
 	int integer;
 	istringstream (routeStringPath) >> integer;
 	return integer;
+
+
+}
+string itos(int integer){
+
+	stringstream mystring;
+	mystring << mystring;
+	return mystring.str();
 
 
 }
@@ -431,8 +449,8 @@ TRAINS findTrain(TRAINS trainList[100], int curStation, int nextStation)
 	for(int i=0; i<numTrains; i++){
 		// if departure and arrival stations match up with the current and 
 		// next stations,
-		cout << trainList[i].Departure_Station << ":" << curStation << endl;
-		cout << trainList[i].Arrival_Station << ":" << nextStation << endl;
+		//cout << trainList[i].Departure_Station << ":" << curStation << endl;
+		//cout << trainList[i].Arrival_Station << ":" << nextStation << endl;
 		if(trainList[i].Departure_Station == curStation && trainList[i].Arrival_Station == nextStation){
 			// Return that train
 			return trainList[i];
@@ -523,14 +541,11 @@ void getStations(string filePath, string stationlist[]){
  * @modified NoremacSkich | 2014/4/29
  *
  */
-void printShortTime(string stationList[], string start, string end, int numHours, int numMinutes){
+void printShortTime(string startStation, string endStation, int numHours, int numMinutes){
 	
-	int startStation =0;
-	int endStation=0;
-	istringstream (start) >> startStation;
-	istringstream (end) >> endStation;
+
 	cout << "REPORT 1: Shortest time riding on Trains." << endl;
-	cout << "To go from " << stationList[startStation] << " to " << stationList[endStation] << "you will need to ride on trains for " << endl;
+	cout << "To go from " << startStation << " to " << endStation << " you will need to ride on trains for " << endl;
 	cout << numHours << " hours and " << numMinutes << " minutes." << endl;
 	
 	cout << "You will take the following trains:" << endl;
@@ -624,13 +639,13 @@ void findReportInfo(TRAINS trainList[], TRAINS shortMatrix[100][100], int middle
  */
 void printRoute(TRAINS trainInfo, string Stations[]){
 	
-	cout << "Leave ";
+	cout << "Leave";
 	// Madison
 	cout << Stations[trainInfo.Departure_Station];
 	cout << " at ";
 	// 8:00 am
 	cout << trainInfo.DT_String;
-	cout << " and arrive at ";
+	cout << " and arrive at";
 	// Sioux Falls
 	cout << Stations[trainInfo.Arrival_Station];
 	cout << " at ";
@@ -839,6 +854,21 @@ void printTrainInfo(TRAINS trainSched[], int trainID){
 	cout << "-------------------" << endl;
 	
 }
+void printTrainInfo(TRAINS train){
+
+	cout << "DS: \"" << train.Departure_Station << "\"" << endl;
+	cout << "AS: \"" << train.Arrival_Station << "\"" << endl;
+	cout << "DT: \"" << train.Departure_Time << "\"" << endl;
+	cout << "AT: \"" << train.Arrival_Time << "\"" << endl;
+
+	// Set the travel time.
+	cout << "Travel_Time: \"" << train.Travel_Time << "\"" << endl;
+	cout << "DT_String: \"" << train.DT_String << "\"" << endl;
+	cout << "AT_String: \"" << train.AT_String << "\"" << endl;
+	cout << "Valid: \"" << train.valid << "\"" << endl;
+	cout << "-------------------" << endl;
+
+}
 int routeMinutes(TRAINS trainList[100], int routeTable[100], int startNum, int endNum){
 
 	return (findTrain(trainList, startNum, endNum)).Travel_Time;
@@ -854,7 +884,7 @@ int routeMinutes(TRAINS trainList[100], int routeTable[100], int startNum, int e
  * @author NoremacSkich | 2014/4/14
  *
  */
-void showTrainSched(TRAINS trainList[100], string stations[], TRAINS shortMatrix[100][100], int middleMatrix[100][100]){
+void showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMatrix[100][100], int middleMatrix[100][100]){
 	
 	// Place to store the starting station
 	string startStation = "";
@@ -862,7 +892,7 @@ void showTrainSched(TRAINS trainList[100], string stations[], TRAINS shortMatrix
 	string endStation = "";
 	
 	// Show the options
-	showStations(stations, 49, 1);
+	showStations(stationList, 49, 1);
 	
 	// Ask for Starting station
 	cout << "What station do you want to start at?" << endl;
@@ -877,17 +907,120 @@ void showTrainSched(TRAINS trainList[100], string stations[], TRAINS shortMatrix
 		return;
 	}
 
-	// Calculate the route
-	completePath( shortMatrix, middleMatrix, trainStringtoInt(startStation), trainStringtoInt(endStation), stations);
+	string routePath;
+
+	// Put the train route into a string
+	routePath = completePath( shortMatrix, middleMatrix, stoi(startStation), stoi(endStation));
+	//cout << routePath << endl;
+
+	// Separate out the integers
+
+	// first create integer array
+	int stationOrder[100] = {-1};
+
+	// Next insert strings into the array
+
+	int i = 0;
+
+	// this temporarily stores the station number in a string format
+	string tmpStationNumber;
+
+	// This holds the entire route path
+	stringstream tmpString;
+
+	// Dump the route into tmp string
+	tmpString << routePath;
+
+	// While there is stuff in the path
+	while(i<globalPathCount){
+
+		// Dump the first number into tmpStationNumber
+		tmpString >> tmpStationNumber;
+
+		// Then store the station number into the array
+		stationOrder[i] = stoi(tmpStationNumber);
+
+		// This increments to the next position
+		i++;
+	}
+
+	// Now look up the train based on the starting station and ending station
+
+	// First, create an array of train routes
+	TRAINS trainRoute[100];
+
+	// then initialize them
+	initMatrix(trainRoute);
+
+	// This is the total number of minutes to get from point A to point B on a train
+	int numMinutes = 0;
+	int numHours = 0;
+	i=0;
+	TRAINS train;
+	while(i+1<globalPathCount){
+
+		// Get the route
+		train = findTrain(trainList, i, i+1);
+
+		// Stash it in a train route
+		trainRoute[i] = train;
+
+		// While you have it, add up the time
+		numMinutes += train.Travel_Time;
+
+		// Increment the incrementor
+		i++;
+	}
+
+	// print out the time traveled
+	///cout << numMinutes << endl;
+
+	i = 0;
+	/*
+	while(trainRoute[i].valid){
+
+		// Print out the train info
+		printTrainInfo(trainRoute[i]);
+
+		// Increment the incrementor
+		i++;
+	}*/
+	// Calculate the hours and minutes
+	// this will return both the number of minutes and number of hours
+	// Separate out the minutes and hours
+	// use the hours variable to temporarily store the
+	// left over minutes
+	numHours = numMinutes % 60;
+
+	// Now subtract the left over minutes from the minutes and divide by 60,
+	// this should give you a whole number of hours
+	numHours = (numMinutes - numHours) / 60;
+
+	// Now get the number of minutes
+	numMinutes = numMinutes % 60;
+
+	//cout << numHours << ":" << numMinutes;
+	// All that I need to do now is print out the report
+
+	// First the top portion.
+	printShortTime(stationList[trainRoute[0].Arrival_Station], stationList[trainRoute[globalPathCount-2].Departure_Station], numHours, numMinutes);
+	cout << endl << endl;
+	i = 0;
+	// Then the routes
+	while(trainRoute[i].valid){
+
+		printRoute(trainRoute[i], stationList);
+		i++;
+	}
 
 
-	int routeTable[100] = {-1};
-	// convert the route path into an integer array
-	printVerticesList(stations, routeTable);
+
+	// Finally say end report
+
+	/*
 
 	// initialize the minutes and hours
-	int numMinutes = -1;
-	int numHours = -1;
+
 
 
 	// Get the total amount of time spent on the train.
@@ -897,15 +1030,15 @@ void showTrainSched(TRAINS trainList[100], string stations[], TRAINS shortMatrix
 	for(int i=0; i<numStations; i++){
 		// Get the current station
 
-		numMinutes = numMinutes + routeMinutes(trainList, routeTable, trainStringtoInt(startStation), trainStringtoInt(endStation));
+		numMinutes = numMinutes + routeMinutes(trainList, routeTable, stoi(startStation), stoi(endStation));
 		// increment i
 		i++;
 	}
 cout << "after" << endl;
 	cout << numMinutes << endl;
 	// Convert the number of minutes to hours and minutes
-	minToHours(numMinutes, numHours);
 	
+
 	// clear the screen
 	clearScreen();
 	
@@ -915,7 +1048,7 @@ cout << "after" << endl;
 	printShortTime(stations, startStation, endStation, numHours, numMinutes);
 
 	// print out the stations
-
+	*/
 }
 
 
@@ -945,7 +1078,7 @@ void fillMatrix(TRAINS trainList[], TRAINS adjMatrix[100][100]){
 			break;
 		}
 		// get the arrival and departure stations, and copy over the record
-		cout << i << endl;
+		///cout << i << endl;
 		adjMatrix[trainList[i].Departure_Station][trainList[i].Arrival_Station] = trainList[i];
 	}
 }
@@ -1105,6 +1238,20 @@ void initMatrix(TRAINS matrix[100][100]){
 	}
 }
 
+void initMatrix(TRAINS matrix[100]){
+	for(int j = 0; j<100; j++){
+		for(int i = 0; i<100; i++){
+			matrix[i].Departure_Station = -1;
+			matrix[i].Arrival_Station = -1;
+			matrix[i].Departure_Time = -1;
+			matrix[i].Arrival_Time = -1;
+			matrix[i].Travel_Time = 50000;
+			matrix[i].DT_String = "-";
+			matrix[i].AT_String = "-";
+			matrix[i].valid = false;
+		}
+	}
+}
 // ====== main driver ==============================
 int main(void)
 {
@@ -1159,17 +1306,17 @@ int main(void)
 	// This is me being extremely lazy.
 	//fillMatrix(trainSched, shortMatrix);
 	
-	cout << endl << "Shortest" << numStations << endl;
+	//cout << endl << "Shortest" << numStations << endl;
 	shortest(adjMatrix, shortMatrix, middleMatrix, numStations);
 	
-	cout << "After the Sort" << endl;
+	//cout << "After the Sort" << endl;
 	// print out the adjancy matrix
-	cout << endl << "Adjancey Matrix" << endl;
-	printArray(adjMatrix);
-	cout << endl << "Short Matrix" << endl;
-	printArray(shortMatrix);
-	cout << endl << "Middle Matrix" << endl;
-	printArray(middleMatrix);
+	//cout << endl << "Adjancey Matrix" << endl;
+	//printArray(adjMatrix);
+	//cout << endl << "Short Matrix" << endl;
+	//printArray(shortMatrix);
+	//cout << endl << "Middle Matrix" << endl;
+	//printArray(middleMatrix);
 	
 	// Store the starting and stoping stations
 	int start = 0;
@@ -1183,13 +1330,13 @@ int main(void)
 	}
 	
 	// print out the adjancy matrix
-	cout << endl << "Adjancey Matrix" << endl;
+	/*cout << endl << "Adjancey Matrix" << endl;
 	printArray(adjMatrix);
 	cout << endl << "Short Matrix" << endl;
 	printArray(shortMatrix);
 	cout << endl << "Middle Matrix" << endl;
 	printArray(middleMatrix);
-	
+	*/
 	cout << "Show Stations" << endl;
 	//showStations(stationList, 5, 1);
 	

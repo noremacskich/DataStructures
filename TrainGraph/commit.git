@@ -1,14 +1,5 @@
-Printing out Report 2. . . In Progress
+Printing out Report 3. . . Complete
 
-Lost track of changes, but now will go and 
-make sure that the path will return an array of trains in order.
+got it working for most part, need to take care of no routes, same station, etc.
 
-Created:
-1	routeMinutes
-
-
-Modified:
-1	fillMatrix(TRAINS trainList[], TRAINS adjMatrix[100][100])
-2
-Reasons:
-1	Removed extranious comment lines from the bottom of the function.
+all modifications made on 4/30/2014
