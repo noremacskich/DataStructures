@@ -208,21 +208,15 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
 	for(int i=0; i<numVertexes; i++){
 		middleMatrix[i][i]= 0;
 	}
-	//cout << "Before Sort" << endl;
-	//printArray(shortMatrix);
-	//cout << "After Sort" << endl;
+
 	// Compute the shortest paths
 	for(int k=0; k < numVertexes; k++){
-		//printArray(shortMatrix);
 		for(int i=0; i < numVertexes; i++){
 			for(int j=0; j < numVertexes; j++){
-				//if( shortMatrix[i][k].valid && shortMatrix[k][j].valid){
 				if( shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time < shortMatrix[i][j].Travel_Time){ // works
 					shortMatrix[i][j].Travel_Time = shortMatrix[i][k].Travel_Time + shortMatrix[k][j].Travel_Time;// works
-					//printArray(shortMatrix);
 					middleMatrix[i][j] = k; // record the middle path
 				}
-				//}
 			}
 		}
 	}
@@ -251,6 +245,7 @@ void shortest(TRAINS adjMatrix[100][100], TRAINS shortMatrix[100][100], int midd
  */
 
 string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int j ){
+
 	// This is storing the path
  	stringstream returnString;
  	
@@ -259,6 +254,7 @@ string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int
 
 		// This is the middle point
 		int k;
+
 		// Set k to the midpoint of i -> j
 		k = middleMatrix[i][j];
 		
@@ -309,29 +305,6 @@ string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int
  */
 string completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end){
 	stringstream returnString;	// This will hold the HH:MM APM string
-	
-	// Check to make sure stations exist
-	if(start > numStations){
-		// starting station doesn't exist
-		return "";
-	}
-	
-	if(end > numStations){
-		// ending station doesn't exist
-		return "";
-	}
-	
-	// See if route doesn't exist
-	if(shortMatrix[start][end].Travel_Time == 50000){
-		// there is no route between the starting and stopping stations
-		return "";
-	}
-	
-	// is This is going to itself?
-	if(middleMatrix[start][end] == 0){
-		// The starting and stopping stations are the same
-		return "";
-	}
 	
 	// initialize the stations index value (stationI)
 	int stationI = 0;
@@ -545,8 +518,8 @@ void printShortTime(string startStation, string endStation, int numHours, int nu
 	
 
 	cout << "REPORT 1: Shortest time riding on Trains." << endl;
-	cout << "To go from " << startStation << " to " << endStation << " you will need to ride on trains for " << endl;
-	cout << numHours << " hours and " << numMinutes << " minutes." << endl;
+	cout << "To go from " << startStation << " to " << endStation << " you will need to ride on " << endl;
+	cout << "trains for " << numHours << " hours and " << numMinutes << " minutes." << endl;
 	
 	cout << "You will take the following trains:" << endl;
 	
@@ -882,35 +855,64 @@ int routeMinutes(TRAINS trainList[100], int routeTable[100], int startNum, int e
  *		They also contain the arrival and departure stations.
  *
  * @author NoremacSkich | 2014/4/14
+ * @modified NoremacSkich | 2014/5/3
  *
  */
 void showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMatrix[100][100], int middleMatrix[100][100]){
 	
 	// Place to store the starting station
-	string startStation = "";
+	string start = "";
 	// Place to store the ending station
-	string endStation = "";
+	string end = "";
 	
 	// Show the options
-	showStations(stationList, 49, 1);
+	showStations(stationList, numStations/2, 1);
 	
 	// Ask for Starting station
 	cout << "What station do you want to start at?" << endl;
-	cin >> startStation;
+	cin >> start;
 	
 	cout << "Where do you wish to go?" << endl;
-	cin >> endStation;
+	cin >> end;
+
+	int startStation;
+	int endStation;
+	startStation = stoi(start);
+	endStation = stoi(end);
 	cout << endl;
+
 	// Check the input
+	// Check to make sure stations exist
+	if(startStation > numStations){
+		// starting station doesn't exist
+		cout << "Your starting station," << stationList[startStation] << " doesn't exist." << endl;
+		return;
+	}
+
+	if(endStation > numStations){
+		// ending station doesn't exist
+		cout << "Your ending station," << stationList[endStation] << " doesn't exist." << endl;
+		return;
+	}
+
+	// See if route doesn't exist
+	if(shortMatrix[startStation][endStation].Travel_Time == 50000){
+		// there is no route between the starting and stopping stations
+		cout << "The route between " << stationList[startStation] << " and" <<	stationList[endStation] << " doesn't exist." << endl;
+		return;
+	}
+
+	// is This is going to itself?
 	if(startStation == endStation){
-		// They are the same station, restarting
+		// The starting and stopping stations are the same
+		cout << "You entered the same station twice!" << endl;
 		return;
 	}
 
 	string routePath;
 
 	// Put the train route into a string
-	routePath = completePath( shortMatrix, middleMatrix, stoi(startStation), stoi(endStation));
+	routePath = completePath( shortMatrix, middleMatrix, startStation, endStation);
 	//cout << routePath << endl;
 
 	// Separate out the integers
@@ -1087,14 +1089,14 @@ void fillMatrix(TRAINS trainList[], TRAINS adjMatrix[100][100]){
  *	^	This will print out the main menu.
  *
  * @author NoremacSkich | 2014/4/14
- *
+ * @modified NoremacSkich | 2014/5/3
  */
  void showMainMenu(void){
 	cout << "Main Menu" << endl;
 	
 	cout << "1: List of Stations" << endl;
 	cout << "2: Find Shortest Travel Time on Trains" << endl;
-	cout << "3: Find Shortest Time Overall" << endl;
+	cout << "3: Find Shortest Time Overall (Not in Use)" << endl;
 	cout << "4: exit" << endl;
 }
 
@@ -1337,12 +1339,12 @@ int main(void)
 	cout << endl << "Middle Matrix" << endl;
 	printArray(middleMatrix);
 	*/
-	cout << "Show Stations" << endl;
+	//cout << "Show Stations" << endl;
 	//showStations(stationList, 5, 1);
 	
-	showTrainSched(trainSched, stationList, shortMatrix, middleMatrix);
-	/*
-	if(false){
+	//showTrainSched(trainSched, stationList, shortMatrix, middleMatrix);
+
+
 	int main_choice;
 
 	do{
@@ -1371,18 +1373,20 @@ int main(void)
 			
 			
 			case 1: 
-				showStations(stations, 49, 1);
+				clearScreen();
+				showStations(stationList, numStations/2, 1);
 				myPause();
 				break; // To the main menu
 				
 			case 2:
-				cout << "Shortest Travel Time on Trains" << endl;
-				showTrainSched(stations, shortMatrix, middleMatrix)
+				//cout << "Shortest Travel Time on Trains" << endl;
+				clearScreen();
+				showTrainSched(trainSched, stationList, shortMatrix, middleMatrix);
 				myPause();
 				break; // To the main menu
 				
 			case 3:
-				cout << "Find Shortest Time Overall" << endl;
+				cout << "Find Shortest Time Overall (not in use)" << endl;
 				myPause();			
 				break; // To the main menu
 				
@@ -1396,8 +1400,8 @@ int main(void)
 				
 		}
 	}while(main_choice != 4);
-	}
-	*/
+
+
 	// Exit the program gracefully, without errors
 	return 0;
 }
