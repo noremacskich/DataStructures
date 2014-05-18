@@ -1,16 +1,8 @@
-Completing the Assignment . . . Complete
+Error Correcting . . . Station less than zero
 
 Modified:
 1	showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMatrix[100][100], int middleMatrix[100][100])
-2	printShortTime(string startStation, string endStation, int numHours, int numMinutes)
-3	completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int start, int end)
-4	main()
-5	showMainMenu(void)
 
-Reasons:
-1	Changed the way the stations are printed out, now will print out full two columns of stations.
-	Added checks to the input.
-2	Made the first line in paragraph close earlier
-3	Removed the checks for same path, instead using them in the showTrainSched
-4	Using the menu now, program seems to work now.
-5	Updated the third menu option to say not in use.
+
+Reason:
+1	Needed to take into account if the user inputed a negative number.  Forgot to bring in the stationOrder array into the findTrain function, lost half of my points because of this ;(

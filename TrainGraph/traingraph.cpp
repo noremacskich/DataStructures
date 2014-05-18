@@ -279,7 +279,7 @@ string path(TRAINS shortMatrix[100][100], int middleMatrix[100][100], int i, int
 	}
 	return "";
  }
- 
+
 /**@fun completePath(int shortMatrix[4][4], int middleMatrix[4][4], int start, int end, string verticesList[100])
  *	^	This will fill in the array for the station order (stations)
  * 
@@ -321,7 +321,7 @@ string completePath(TRAINS shortMatrix[100][100], int middleMatrix[100][100], in
 	
 	// Finally put the last station in the array
 	returnString << end;
-	
+
 	return returnString.str();
 	// create the table from the string
 	//pathToTable(trainRoute, returnString.str());
@@ -883,13 +883,13 @@ void showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMat
 
 	// Check the input
 	// Check to make sure stations exist
-	if(startStation > numStations){
+	if(startStation > numStations || startStation < 0){
 		// starting station doesn't exist
 		cout << "Your starting station," << stationList[startStation] << " doesn't exist." << endl;
 		return;
 	}
 
-	if(endStation > numStations){
+	if(endStation > numStations || endStation < 0){
 		// ending station doesn't exist
 		cout << "Your ending station," << stationList[endStation] << " doesn't exist." << endl;
 		return;
@@ -962,7 +962,7 @@ void showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMat
 	while(i+1<globalPathCount){
 
 		// Get the route
-		train = findTrain(trainList, i, i+1);
+		train = findTrain(trainList, stationOrder[i], stationOrder[i+1]);
 
 		// Stash it in a train route
 		trainRoute[i] = train;
@@ -1039,13 +1039,13 @@ void showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMat
 cout << "after" << endl;
 	cout << numMinutes << endl;
 	// Convert the number of minutes to hours and minutes
-	
+
 
 	// clear the screen
 	clearScreen();
-	
+
 	// Print out the Report
-	
+
 	// Print out the top paragraph
 	printShortTime(stations, startStation, endStation, numHours, numMinutes);
 
