@@ -1,8 +1,10 @@
-Error Correcting . . . Station less than zero
+Train Assignment Upload
 
-Modified:
-1	showTrainSched(TRAINS trainList[100], string stationList[], TRAINS shortMatrix[100][100], int middleMatrix[100][100])
+Added:
+1	2014_A3_Graphs.pdf
+2	2014_Report_Formats_Trains.pdf
+3	All_Pairs_Shortest_Path.pdf
 
 
-Reason:
-1	Needed to take into account if the user inputed a negative number.  Forgot to bring in the stationOrder array into the findTrain function, lost half of my points because of this ;(
+Reasons:
+1-3	This is was the assignment and related documentation for that assignment.
